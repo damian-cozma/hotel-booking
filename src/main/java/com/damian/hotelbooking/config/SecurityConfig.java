@@ -34,8 +34,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .httpBasic(withDefaults());
+                .authenticationProvider(authenticationProvider());
+                //.httpBasic(withDefaults());
 
         return http.build();
     }
