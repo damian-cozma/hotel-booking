@@ -3,6 +3,7 @@ package com.damian.hotelbooking.service;
 import com.damian.hotelbooking.dto.LoginRequest;
 import com.damian.hotelbooking.dto.SignupRequest;
 import com.damian.hotelbooking.entity.User;
+import com.damian.hotelbooking.entity.UserRole;
 import com.damian.hotelbooking.repository.UserRepository;
 import com.damian.hotelbooking.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +36,7 @@ public class AuthService {
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
                 request.getPhoneNumber(),
-                request.getRole()
+                UserRole.ROLE_USER
         );
         userRepository.save(user);
     }
