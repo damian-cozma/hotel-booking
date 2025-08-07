@@ -7,8 +7,4 @@ public enum RoomType {
     DELUXE,
     FAMILY,
     PENTHOUSE;
-
-    public String getRoomType() {
-        return this.name();
-    }
 }

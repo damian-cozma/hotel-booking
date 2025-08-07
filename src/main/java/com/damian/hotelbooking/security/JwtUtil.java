@@ -2,6 +2,7 @@ package com.damian.hotelbooking.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -10,8 +11,11 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "29310e50f68a3bfd5f0fb43ead2055290fc9dca318b115bd921469fdbe1a9951";
-    private final long EXPIRATION_TIME = 86400000;
+    @Value("${jwt.secret}")
+    private String SECRET;
+
+    @Value("${jwt.expiration}")
+    private long EXPIRATION_TIME;
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()

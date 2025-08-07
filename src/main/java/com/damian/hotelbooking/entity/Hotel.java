@@ -2,6 +2,7 @@ package com.damian.hotelbooking.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -114,5 +115,19 @@ public class Hotel {
     }
     public void setAmenities(Set<Amenity> amenities) {
         this.amenities = amenities;
+    }
+
+    // Equals and Hash
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        Hotel hotel = (Hotel) object;
+        return Objects.equals(id, hotel.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

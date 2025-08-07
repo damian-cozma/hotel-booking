@@ -29,20 +29,20 @@ public class AuthService {
 
     public void register(SignupRequest request) {
         User user = new User(
-                request.username,
-                request.firstName,
-                request.lastName,
-                request.email,
-                passwordEncoder.encode(request.password),
-                request.phoneNumber,
-                request.role
+                request.getUsername(),
+                request.getFirstName(),
+                request.getLastName(),
+                request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getPhoneNumber(),
+                request.getRole()
         );
         userRepository.save(user);
     }
 
     public String login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email, request.password)
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return jwtUtil.generateToken(userDetails);
