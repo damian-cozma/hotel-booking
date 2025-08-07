@@ -1,9 +1,17 @@
 package com.damian.hotelbooking.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Room {
 
@@ -43,54 +51,4 @@ public class Room {
     )
     private Set<Amenity> amenities;
 
-    // Getters and Setters
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Hotel getHotel() {
-        return hotel;
-    }
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
-    }
-
-    public RoomType getType() {
-        return type;
-    }
-    public void setType(RoomType type) {
-        this.type = type;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
 }
