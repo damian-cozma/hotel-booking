@@ -6,8 +6,4 @@ public enum BookingStatus {
     CHECKED_IN,
     CHECKED_OUT,
     CANCELLED;
-
-    public String getBookingStatus() {
-        return this.name();
-    }
 }
