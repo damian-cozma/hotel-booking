@@ -2,8 +2,11 @@ package com.damian.hotelbooking.service;
 
 import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.repository.UserRepository;
+import com.damian.hotelbooking.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Optional;

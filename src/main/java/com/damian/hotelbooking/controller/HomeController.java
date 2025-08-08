@@ -11,4 +11,9 @@ public class HomeController {
         return "home";
     }
 
+    @GetMapping("/leaders")
+    public String leaders() {
+        return "leaders";
+    }
+
 }
