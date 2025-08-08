@@ -18,12 +18,6 @@ public class HotelbookingApplication {
 	@Bean
 	public CommandLineRunner commandLineRunner(UserRepository userRepository) {
 		return (args) -> {
-			// createUser(userRepository);
 		};
 	}
-
-	private void createUser(UserRepository userRepository) {
-		//userRepository.save(new User("Damian", "Damian", "Cozma", "dcozma.ro@gmail.com", "password123", "0741234567", UserRole.ROLE_USER));
-	}
-
 }

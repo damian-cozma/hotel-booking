@@ -45,9 +45,9 @@ public class UserController {
         return "users/user-form";
     }
 
-    @PostMapping("/add")
-    public String addUser(@ModelAttribute("user") User user) {
-        userService.save(user);
+    @PostMapping("/submitForm")
+    public String submitForm(@ModelAttribute("user") User user) {
+        userService.saveWithPasswordEncoding(user);
 
         return "redirect:/users/list";
     }

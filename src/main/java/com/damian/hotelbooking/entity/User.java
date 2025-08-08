@@ -55,4 +55,20 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.role = role;
     }
+
+    public String getFriendlyRole() {
+        if (role == null) return "";
+
+        switch (role) {
+            case ROLE_HOTEL_ADMIN:
+                return "Hotel Admin";
+            case ROLE_USER:
+                return "User";
+            case ROLE_PLATFORM_ADMIN:
+                return "Administrator";
+            default:
+                return role.name().replace("ROLE_", "").replace("_", " ");
+        }
+    }
+
 }

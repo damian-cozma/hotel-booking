@@ -15,13 +15,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SignupRequest {
     @NotBlank(message = "Field required")
-    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
+    @Size(min = 3, max = 12, message = "Username must be between 3 and 12 characters")
     private String username;
 
     @NotBlank(message = "Field required")
+    @Size(min = 1, max = 12, message = "First name cannot exceed 15 characters")
     private String firstName;
 
     @NotBlank(message = "Field required")
+    @Size(min = 1, max = 12, message = "Last name cannot exceed 15 characters")
     private String lastName;
 
     @NotBlank(message = "Field required")

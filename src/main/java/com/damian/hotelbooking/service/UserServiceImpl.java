@@ -5,9 +5,9 @@ import com.damian.hotelbooking.repository.UserRepository;
 import com.damian.hotelbooking.entity.UserRole;
 import com.damian.hotelbooking.dto.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +35,7 @@ public class UserServiceImpl implements UserService {
 
         if (result.isPresent()) {
             user = result.get();
-        }
-        else {
+        } else {
             throw new RuntimeException("Did not find user id - " + theId);
         }
 
@@ -59,7 +58,7 @@ public class UserServiceImpl implements UserService {
         if (existsByEmail(signupRequest.getEmail())) {
             throw new RuntimeException("Email already registered: " + signupRequest.getEmail());
         }
-        
+
         if (existsByUsername(signupRequest.getUsername())) {
             throw new RuntimeException("Username already taken: " + signupRequest.getUsername());
         }
@@ -68,13 +67,13 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = "{bcrypt}" + passwordEncoder.encode(signupRequest.getPassword());
 
         User user = new User(
-            signupRequest.getUsername(),
-            signupRequest.getFirstName(),
-            signupRequest.getLastName(),
-            signupRequest.getEmail(),
-            encodedPassword,
-            signupRequest.getPhoneNumber(),
-            UserRole.ROLE_USER
+                signupRequest.getUsername(),
+                signupRequest.getFirstName(),
+                signupRequest.getLastName(),
+                signupRequest.getEmail(),
+                encodedPassword,
+                signupRequest.getPhoneNumber(),
+                UserRole.ROLE_USER
         );
 
         return userRepository.save(user);
@@ -88,5 +87,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByUsername(String username) {
         return userRepository.findByUsername(username).isPresent();
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public User saveWithPasswordEncoding(User user) {
+        if (user.getPassword() != null && !user.getPassword().startsWith("{bcrypt}")) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            user.setPassword("{bcrypt}" + passwordEncoder.encode(user.getPassword()));
+        }
+        return userRepository.save(user);
+    }
+
+    @Override
+    public boolean changePassword(User user, String currentPassword, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        String currentEncodedPassword = user.getPassword().replace("{bcrypt}", "");
+        if (!passwordEncoder.matches(currentPassword, currentEncodedPassword)) {
+            return false;
+        }
+
+        user.setPassword("{bcrypt}" + passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return true;
     }
 }

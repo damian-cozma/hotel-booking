@@ -2,26 +2,25 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Hotel Booking | Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"/>
 </head>
-<body>
-    SUPPP B)
+<body class="d-flex flex-column min-vh-100">
 
-    <p>
-        User: <span sec:authentication="principal.username"></span>
-        <br><br>
-        Role: <span sec:authentication="principal.authorities"></span>
-    </p>
+<div th:replace="layout :: navbar"></div>
 
-    <hr>
-    <div sec:authorize="hasRole('HOTEL_ADMIN')">
-        <p>
-            <a th:href="@{/leaders}">Protected (Manager)</a>
-        </p>
-    </div>
+<main class="flex-grow-1 container mt-4">
+    <h1>Bine ai venit la Hotel Booking!</h1>
+    <p>Aici poți vedea camerele disponibile...</p>
+</main>
 
-    <form action="#" th:action="@{/logout}" method="POST">
-        <input type="submit" value="Logout"/>
-    </form>
+<div th:replace="layout :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
