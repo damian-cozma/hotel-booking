@@ -11,8 +11,7 @@ import lombok.Setter;
 public class LoginRequest {
 
     @NotBlank(message = "Field required")
-    @Email(message = "Email format is invalid")
-    private String email;
+    private String username;
 
     @NotBlank(message = "Field required")
     private String password;
