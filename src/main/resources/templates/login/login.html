@@ -35,6 +35,12 @@
                                             You have been logged out.
                                         </div>
                                     </div>
+                                    
+                                    <div th:if="${successMessage}">
+                                        <div class="alert alert-success col-xs-offset-1 col-xs-10">
+                                            <span th:text="${successMessage}"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -50,6 +56,12 @@
                         <div style="margin-top: 10px;" class="form-group">
                             <div class="col-sm-6 controls">
                                 <button type="submit" class="btn btn-success">Login</button>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px;" class="form-group">
+                            <div class="col-sm-12 text-center">
+                                <p>Don't have an account? <a href="/register" class="text-info">Register here</a></p>
                             </div>
                         </div>
                     </form>

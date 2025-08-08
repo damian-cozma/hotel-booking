@@ -3,6 +3,7 @@ package com.damian.hotelbooking.service;
 import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.repository.UserRepository;
 import com.damian.hotelbooking.entity.UserRole;
+import com.damian.hotelbooking.dto.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,5 +51,42 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long theId) {
         userRepository.deleteById(theId);
+    }
+
+    @Override
+    public User registerUser(SignupRequest signupRequest) {
+
+        if (existsByEmail(signupRequest.getEmail())) {
+            throw new RuntimeException("Email already registered: " + signupRequest.getEmail());
+        }
+        
+        if (existsByUsername(signupRequest.getUsername())) {
+            throw new RuntimeException("Username already taken: " + signupRequest.getUsername());
+        }
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = "{bcrypt}" + passwordEncoder.encode(signupRequest.getPassword());
+
+        User user = new User(
+            signupRequest.getUsername(),
+            signupRequest.getFirstName(),
+            signupRequest.getLastName(),
+            signupRequest.getEmail(),
+            encodedPassword,
+            signupRequest.getPhoneNumber(),
+            UserRole.ROLE_USER
+        );
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username).isPresent();
     }
 }
