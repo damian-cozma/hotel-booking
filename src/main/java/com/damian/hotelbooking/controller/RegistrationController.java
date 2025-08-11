@@ -1,6 +1,6 @@
 package com.damian.hotelbooking.controller;
 
-import com.damian.hotelbooking.dto.SignupRequest;
+import com.damian.hotelbooking.dto.SignupDto;
 import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.service.UserService;
 import jakarta.validation.Valid;
@@ -25,38 +25,38 @@ public class RegistrationController {
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("signupRequest", new SignupRequest());
+        model.addAttribute("signupDto", new SignupDto());
         return "login/register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("signupRequest") SignupRequest signupRequest,
+    public String registerUser(@Valid @ModelAttribute("signupDto") SignupDto signupDto,
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes) {
+
+        if (userService.existsByEmail(signupDto.getEmail())) {
+            bindingResult.rejectValue("email", "error.signupDto", "Email already registered");
+        }
+
+        if (userService.existsByUsername(signupDto.getUsername())) {
+            bindingResult.rejectValue("username", "error.signupDto", "Username already taken");
+        }
+
+        if (userService.existsByPhoneNumber(signupDto.getPhoneNumber())) {
+            bindingResult.rejectValue("phoneNumber", "error.signupDto", "Phone number already in use");
+        }
 
         if (bindingResult.hasErrors()) {
             return "login/register";
         }
 
         try {
-            if (userService.existsByEmail(signupRequest.getEmail())) {
-                bindingResult.rejectValue("email", "error.signupRequest", "Email already registered");
-                return "login/register";
-            }
-
-            if (userService.existsByUsername(signupRequest.getUsername())) {
-                bindingResult.rejectValue("username", "error.signupRequest", "Username already taken");
-                return "login/register";
-            }
-
-            User registeredUser = userService.registerUser(signupRequest);
+            User registeredUser = userService.registerUser(signupDto);
             redirectAttributes.addFlashAttribute("successMessage",
                     "Registration successful! You can now login with your username: " + registeredUser.getUsername());
-
             return "redirect:/login";
-
         } catch (Exception e) {
-            bindingResult.rejectValue("", "error.signupRequest", "Registration failed: " + e.getMessage());
+            bindingResult.rejectValue("", "error.signupDto", "Registration failed: " + e.getMessage());
             return "login/register";
         }
     }

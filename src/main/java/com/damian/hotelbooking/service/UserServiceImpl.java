@@ -1,11 +1,10 @@
 package com.damian.hotelbooking.service;
 
+import com.damian.hotelbooking.dto.SignupDto;
 import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.repository.UserRepository;
 import com.damian.hotelbooking.entity.UserRole;
-import com.damian.hotelbooking.dto.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,26 +52,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(SignupRequest signupRequest) {
+    public User registerUser(SignupDto signupDto) {
 
-        if (existsByEmail(signupRequest.getEmail())) {
-            throw new RuntimeException("Email already registered: " + signupRequest.getEmail());
+        if (existsByEmail(signupDto.getEmail())) {
+            throw new RuntimeException("Email already registered: " + signupDto.getEmail());
         }
 
-        if (existsByUsername(signupRequest.getUsername())) {
-            throw new RuntimeException("Username already taken: " + signupRequest.getUsername());
+        if (existsByUsername(signupDto.getUsername())) {
+            throw new RuntimeException("Username already taken: " + signupDto.getUsername());
         }
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = "{bcrypt}" + passwordEncoder.encode(signupRequest.getPassword());
+        String encodedPassword = "{bcrypt}" + passwordEncoder.encode(signupDto.getPassword());
 
         User user = new User(
-                signupRequest.getUsername(),
-                signupRequest.getFirstName(),
-                signupRequest.getLastName(),
-                signupRequest.getEmail(),
+                signupDto.getUsername(),
+                signupDto.getFirstName(),
+                signupDto.getLastName(),
+                signupDto.getEmail(),
                 encodedPassword,
-                signupRequest.getPhoneNumber(),
+                signupDto.getPhoneNumber(),
                 UserRole.ROLE_USER
         );
 
@@ -82,6 +81,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber).isPresent();
     }
 
     @Override

@@ -1,13 +1,16 @@
 package com.damian.hotelbooking.controller;
 
+import com.damian.hotelbooking.dto.PasswordDto;
 import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -32,6 +35,11 @@ public class ProfileController {
         model.addAttribute("user", user);
         model.addAttribute("editable", false);
         model.addAttribute("activeSection", section);
+
+        if ("security".equals(section)) {
+            model.addAttribute("passwordDto", new PasswordDto());
+        }
+
         return "profile/profile";
     }
 
@@ -46,34 +54,66 @@ public class ProfileController {
     }
 
     @PostMapping("/edit")
-    public String saveProfile(@ModelAttribute("user") User formUser, Principal principal) {
+    public String saveProfile(@ModelAttribute("user") User formUser, Principal principal,
+                              RedirectAttributes redirectAttributes, BindingResult bindingResult,
+                              Model model) {
         User user = userService.findByUsername(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + principal.getName()));
 
-        user.setFirstName(formUser.getFirstName());
-        user.setLastName(formUser.getLastName());
-        user.setEmail(formUser.getEmail());
-        user.setPhoneNumber(formUser.getPhoneNumber());
+        if (!user.getPhoneNumber().equals(formUser.getPhoneNumber()) &&
+                userService.existsByPhoneNumber(formUser.getPhoneNumber())) {
+            bindingResult.rejectValue("phoneNumber", "error.signupDto", "Phone number already in use");
+        }
 
-        userService.save(user);
+        if (!user.getEmail().equals(formUser.getEmail()) &&
+                userService.existsByEmail(formUser.getEmail())) {
+            bindingResult.rejectValue("email", "error.signupDto", "Email already registered");
+        }
 
-        return "redirect:/profile";
+        if (bindingResult.hasErrors()) {
+            formUser.setRole(user.getRole());
+            model.addAttribute("user", formUser);
+            model.addAttribute("editable", true);
+            model.addAttribute("activeSection", "profile");
+            return "profile/profile";
+        }
+
+        try {
+            user.setFirstName(formUser.getFirstName());
+            user.setLastName(formUser.getLastName());
+            user.setEmail(formUser.getEmail());
+            user.setPhoneNumber(formUser.getPhoneNumber());
+
+            userService.save(user);
+            redirectAttributes.addFlashAttribute("successMessage", "Successful!");
+            return "redirect:/profile";
+        } catch (Exception e) {
+            bindingResult.rejectValue("", "error.signupDto", "Registration failed: " + e.getMessage());
+            return "redirect:/profile";
+        }
+
     }
 
     @PostMapping("/change-password")
-    public String changePassword(@RequestParam("currentPassword") String currentPassword,
-                                 @RequestParam("newPassword") String newPassword,
-                                 @RequestParam("confirmPassword") String confirmPassword, RedirectAttributes redirectAttributes, Principal principal) {
+    public String changePassword(@Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
+                                 BindingResult bindingResult,
+                                 RedirectAttributes redirectAttributes,
+                                 Principal principal,
+                                 Model model) {
 
-        if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "New passwords don't match");
-            return "redirect:/profile?section=security";
+        if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmPassword())) {
+            bindingResult.rejectValue("confirmPassword", "error.passwordDto", "New passwords don't match");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("activeSection", "security");
+            return "profile/profile";
         }
 
         User user = userService.findByUsername(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found - " + principal.getName()));
 
-        boolean success = userService.changePassword(user, currentPassword, newPassword);
+        boolean success = userService.changePassword(user, passwordDto.getCurrentPassword(), passwordDto.getNewPassword());
 
         if (success) {
             redirectAttributes.addFlashAttribute("success", "Password changed successfully");
@@ -83,6 +123,30 @@ public class ProfileController {
 
         return "redirect:/profile?section=security";
     }
+
+//    @PostMapping("/change-password")
+//    public String changePassword(@RequestParam("currentPassword") String currentPassword,
+//                                 @RequestParam("newPassword") String newPassword,
+//                                 @RequestParam("confirmPassword") String confirmPassword, RedirectAttributes redirectAttributes, Principal principal) {
+//
+//        if (!newPassword.equals(confirmPassword)) {
+//            redirectAttributes.addFlashAttribute("error", "New passwords don't match");
+//            return "redirect:/profile?section=security";
+//        }
+//
+//        User user = userService.findByUsername(principal.getName())
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found - " + principal.getName()));
+//
+//        boolean success = userService.changePassword(user, currentPassword, newPassword);
+//
+//        if (success) {
+//            redirectAttributes.addFlashAttribute("success", "Password changed successfully");
+//        } else {
+//            redirectAttributes.addFlashAttribute("error", "Current password is incorrect");
+//        }
+//
+//        return "redirect:/profile?section=security";
+//    }
 
     @PostMapping("/delete-account")
     public String deleteAccount(Principal principal, HttpServletRequest request) {
