@@ -23,14 +23,14 @@ public class OwnerHotelController {
         this.hotelService = hotelService;
     }
 
-    @GetMapping("/add")
-    public String showAddHotelForm(Model model) {
+    @GetMapping("/new")
+    public String showCreateHotelForm(Model model) {
         model.addAttribute("hotelDto", new HotelDto());
         return "owner/hotel-form";
     }
 
-    @PostMapping("/add")
-    public String addHotel(@Valid @ModelAttribute("hotelDto") HotelDto hotelDto,
+    @PostMapping("/new")
+    public String createHotel(@Valid @ModelAttribute("hotelDto") HotelDto hotelDto,
                            BindingResult bindingResult,
                            Model model,
                            Principal principal) {
