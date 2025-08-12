@@ -26,6 +26,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(configurer ->
                         configurer
                                 .requestMatchers("/users/**").hasRole("PLATFORM_ADMIN")
+                                .requestMatchers("/hotel/submitForm").hasAnyRole("HOTEL_ADMIN", "PLATFORM_ADMIN")
                                 .anyRequest().permitAll()
                 )
                 .formLogin(form ->

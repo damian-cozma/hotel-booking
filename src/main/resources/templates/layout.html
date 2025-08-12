@@ -35,6 +35,7 @@
                     </li>
                 </ul>
 
+
                 <div sec:authorize="isAuthenticated()" class="dropdown">
 
                     <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle" type="button"
@@ -48,6 +49,12 @@
 
                         <li sec:authorize="hasRole('PLATFORM_ADMIN')">
                             <a class="dropdown-item" href="/users/list">Admin Dashboard</a>
+                        </li>
+
+                        <li sec:authorize="hasRole('HOTEL_ADMIN')">
+                            <a class="dropdown-item btn btn-warning text-dark" href="/hotel/submitForm">
+                                Manage Hotel
+                            </a>
                         </li>
 
                         <li>
