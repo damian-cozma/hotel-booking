@@ -1,62 +1,97 @@
 package com.damian.hotelbooking.controller;
 
+import com.damian.hotelbooking.dto.PasswordDto;
+import com.damian.hotelbooking.dto.ProfileDto;
 import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.security.Principal;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/profile")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/list")
-    public String listUsers(Model model) {
-        List<User> userList = userService.findAll();
+    @GetMapping
+    public String viewProfile(Model model, Principal principal,
+                              @RequestParam(value = "section", defaultValue = "profile") String section) {
 
-        model.addAttribute("users", userList);
-
-        return "users/list-users";
-    }
-
-    @GetMapping("/showFormForAdd")
-    public String showFormForAdd(Model model) {
-        User user = new User();
-
+        User user = userService.findByUsername(principal.getName());
         model.addAttribute("user", user);
+        model.addAttribute("editable", false);
+        model.addAttribute("activeSection", section);
 
-        return "users/user-form";
+        if ("security".equals(section)) {
+            model.addAttribute("passwordDto", new PasswordDto());
+        }
+
+        return "common/profile";
     }
 
-    @GetMapping("/showFormForUpdate")
-    public String showFormForUpdate(@RequestParam("userId") Long id, Model model) {
-        User user = userService.findById(id);
+    @GetMapping("/edit")
+    public String editProfile(Model model, Principal principal) {
+        ProfileDto profileDto = userService.getProfile(principal.getName());
 
-        model.addAttribute("user", user);
-
-        return "users/user-form";
+        model.addAttribute("profileDto", profileDto);
+        model.addAttribute("editable", true);
+        model.addAttribute("activeSection", "profile");
+        return "common/profile";
     }
 
-    @PutMapping("/submitForm")
-    public String submitForm(@ModelAttribute("user") User user) {
-        userService.saveWithPasswordEncoding(user);
+    @PostMapping("/edit")
+    public String editProfile(@Valid @ModelAttribute("profileDto") ProfileDto profileDto,
+                              BindingResult bindingResult, Principal principal, Model model) {
 
-        return "redirect:/users/list";
+        userService.saveProfile(profileDto, principal, bindingResult, model);
+
+        if (bindingResult.hasErrors()) {
+            User user = userService.findByUsername(principal.getName());
+
+            model.addAttribute("user", user);
+            model.addAttribute("editable", true);
+            model.addAttribute("activeSection", "profile");
+            return "common/profile";
+        }
+        return "redirect:/profile";
     }
 
-    @GetMapping("/delete")
-    public String delete(@RequestParam("userId") Long id) {
-        userService.deleteById(id);
+    @PostMapping("/change-password")
+    public String changePassword(@Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
+                                 BindingResult bindingResult, Principal principal, Model model) {
 
-        return "redirect:/users/list";
+        boolean success = userService.changePassword(principal, passwordDto.getCurrentPassword(),
+                passwordDto.getNewPassword(), passwordDto.getConfirmPassword(), bindingResult, model);
+
+        if (!success) {
+            model.addAttribute("activeSection", "security");
+            return "common/profile";
+        }
+
+        return "redirect:/profile?section=security";
+    }
+
+    @PostMapping("/delete-account")
+    public String deleteAccount(Principal principal, HttpServletRequest request) {
+
+        userService.deleteAccount(principal, request);
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/notifications")
+    public String notifications() {
+        return "common/notifications";
     }
 
 }

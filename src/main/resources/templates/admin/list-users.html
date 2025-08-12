@@ -9,14 +9,14 @@
 </head>
 <body>
 
-<div th:replace="layout :: navbar"></div>
+<div th:replace="common/layout :: navbar"></div>
 
 <div class="container">
 
     <h3>User Directory</h3>
     <hr>
     
-    <a th:href="@{/users/showFormForAdd}" class="btn btn-primary btn-sm mb-3">
+    <a th:href="@{/users/new}" class="btn btn-primary btn-sm mb-3">
         Add User
     </a>
 
@@ -47,13 +47,15 @@
                 <td th:text="${user.role}"></td>
 
                 <td>
-                    <a th:href="@{/users/showFormForUpdate(userId=${user.id})}" class="btn btn-info btn-sm">
+                    <a th:href="@{/users/{userId}/edit(userId=${user.id})}" class="btn btn-info btn-sm">
                         Update
                     </a>
 
-                    <a th:href="@{/users/delete(userId=${user.id})}" class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
+                    <!-- in browser poti doar POST/GET unless e SPA/JS heavy, trebuie folosit hiddenMethod pt a masca browser-ului alte metode Delete/Put/etc. -->
+                    <form th:action="@{/users/{userId}(userId=${user.id})}" method="post" style="display:inline;">
+                        <input type="hidden" name="_method" value="delete" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                 </td>
 
             </tr>
@@ -63,18 +65,9 @@
 
 </div>
 
-<div th:replace="layout :: footer"></div>
+<div th:replace="common/layout :: footer"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-

@@ -14,22 +14,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 
 @Controller
-@RequestMapping("/hotel")
-public class HotelController {
+@RequestMapping("/owner/hotels")
+public class OwnerHotelController {
 
     private final HotelService hotelService;
 
-    public HotelController(HotelService hotelService) {
+    public OwnerHotelController(HotelService hotelService) {
         this.hotelService = hotelService;
     }
 
-    @GetMapping("/submitForm")
-    public String showHotelForm(Model model) {
+    @GetMapping("/add")
+    public String showAddHotelForm(Model model) {
         model.addAttribute("hotelDto", new HotelDto());
-        return "hotels/hotel-form";
+        return "owner/hotel-form";
     }
 
-    @PostMapping("/submitForm")
+    @PostMapping("/add")
     public String addHotel(@Valid @ModelAttribute("hotelDto") HotelDto hotelDto,
                            BindingResult bindingResult,
                            Model model,
@@ -37,7 +37,7 @@ public class HotelController {
 
         if (bindingResult.hasErrors()) {
             System.out.println("Errors found: " + bindingResult.getAllErrors());
-            return "hotels/hotel-form";
+            return "owner/hotel-form";
         }
 
         hotelService.addHotel(hotelDto, bindingResult, principal);
