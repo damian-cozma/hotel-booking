@@ -17,24 +17,13 @@ import java.util.Optional;
 public interface UserService {
     List<User> findAll();
 
-    User findById(Long theId);
-
-    User save(User theEmployee);
-
-    void deleteById(Long theId);
-
     User registerUser(SignupDto signupDto, BindingResult bindingResult);
 
     User saveProfile(ProfileDto profileDto, Principal principal,
                      BindingResult bindingResult, Model model);
 
-    boolean existsByEmail(String email);
+    User findById(Long theId);
 
-    boolean existsByPhoneNumber(String phoneNumber);
-
-    boolean existsByUsername(String username);
-
-    Optional<User> findByUsername(String username);
 
     User saveWithPasswordEncoding(User user);
 
@@ -42,4 +31,10 @@ public interface UserService {
                            String confirmPassword, BindingResult bindingResult, Model model);
 
     void deleteAccount(Principal principal, HttpServletRequest request);
+
+    User findByUsername(String name);
+
+    void deleteById(Long id);
+
+    ProfileDto getProfile(String name);
 }

@@ -6,7 +6,6 @@ import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,8 +27,7 @@ public class ProfileController {
     public String viewProfile(Model model, Principal principal,
                               @RequestParam(value = "section", defaultValue = "profile") String section) {
 
-        User user = userService.findByUsername(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + principal.getName()));
+        User user = userService.findByUsername(principal.getName());
         model.addAttribute("user", user);
         model.addAttribute("editable", false);
         model.addAttribute("activeSection", section);
@@ -43,14 +41,9 @@ public class ProfileController {
 
     @GetMapping("/edit")
     public String editProfile(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + principal.getName()));
+        ProfileDto profileDto = userService.getProfile(principal.getName());
 
-        ProfileDto profileDto = new ProfileDto(
-                user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber()
-        );
         model.addAttribute("profileDto", profileDto);
-        model.addAttribute("user", user);
         model.addAttribute("editable", true);
         model.addAttribute("activeSection", "profile");
         return "profile/profile";
@@ -63,8 +56,8 @@ public class ProfileController {
         userService.saveProfile(profileDto, principal, bindingResult, model);
 
         if (bindingResult.hasErrors()) {
-            User user = userService.findByUsername(principal.getName())
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + principal.getName()));
+            User user = userService.findByUsername(principal.getName());
+
             model.addAttribute("user", user);
             model.addAttribute("editable", true);
             model.addAttribute("activeSection", "profile");

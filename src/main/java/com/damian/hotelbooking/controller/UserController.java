@@ -45,7 +45,7 @@ public class UserController {
         return "users/user-form";
     }
 
-    @PostMapping("/submitForm")
+    @PutMapping("/submitForm")
     public String submitForm(@ModelAttribute("user") User user) {
         userService.saveWithPasswordEncoding(user);
 

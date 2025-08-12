@@ -52,27 +52,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User save(User user) {
-        return userRepository.save(user);
-    }
-
-    @Override
-    public void deleteById(Long theId) {
-        userRepository.deleteById(theId);
-    }
-
-    @Override
     public User registerUser(@Valid SignupDto signupDto, BindingResult bindingResult) {
 
-        if (existsByEmail(signupDto.getEmail())) {
+        if (userRepository.existsByEmail(signupDto.getEmail())) {
             bindingResult.rejectValue("email", "error.signupDto", "Email already registered");
         }
 
-        if (existsByUsername(signupDto.getUsername())) {
+        if (userRepository.existsByUsername(signupDto.getUsername())) {
             bindingResult.rejectValue("username", "error.signupDto", "Username already taken");
         }
 
-        if (existsByPhoneNumber(signupDto.getPhoneNumber())) {
+        if (userRepository.existsByPhoneNumber(signupDto.getPhoneNumber())) {
             bindingResult.rejectValue("phoneNumber", "error.signupDto", "Phone number already in use");
         }
 
@@ -124,34 +114,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return userRepository.findByEmail(email).isPresent();
-    }
-
-    @Override
-    public boolean existsByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber).isPresent();
-    }
-
-    @Override
-    public boolean existsByUsername(String username) {
-        return userRepository.findByUsername(username).isPresent();
-    }
-
-    @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
     @Override
     public User saveWithPasswordEncoding(User user) {
         if (user.getPassword() != null && !user.getPassword().startsWith("{bcrypt}")) {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             user.setPassword("{bcrypt}" + passwordEncoder.encode(user.getPassword()));
         }
-        return userRepository.save(user);
+        user =  userRepository.save(user);
+        return user;
     }
 
     @Override
@@ -197,5 +167,23 @@ public class UserServiceImpl implements UserService {
         if (session != null) {
             session.invalidate();
         }
+    }
+
+    @Override
+    public User findByUsername(String name) {
+        return userRepository.findByUsername(name).orElseThrow(() -> new UsernameNotFoundException("User not found: " + name));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public ProfileDto getProfile(String name) {
+         User user = findByUsername(name);
+        return new ProfileDto(
+                user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber()
+        );
     }
 }

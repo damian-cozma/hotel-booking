@@ -1,13 +1,9 @@
 package com.damian.hotelbooking.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.Objects;
+import lombok.*;
 import java.util.Set;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,18 +14,16 @@ public class Hotel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "address", nullable = false)
-    private String address;
-
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email",nullable = false)
     private String email;
 
     @Column(name = "description")
@@ -37,6 +31,18 @@ public class Hotel {
 
     @Column(name = "rating")
     private Double rating;
+
+    @Column(name = "country", nullable = false)
+    private String country;
+
+    @Column(name = "city", nullable = false)
+    private String city;
+
+    @Column(name = "street", nullable = false)
+    private String street;
+
+    @Column(name = "postal_code")
+    private String postalCode;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
