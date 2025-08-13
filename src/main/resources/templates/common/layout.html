@@ -35,6 +35,9 @@
                     </li>
                 </ul>
 
+                <div class="p-2" sec:authorize="hasRole('USER')">
+                    <a class="btn btn-outline-primary btn-sm rounded-pill" href="/become-a-host">Become a host</a>
+                </div>
 
                 <div sec:authorize="isAuthenticated()" class="dropdown">
 
@@ -71,6 +74,7 @@
 
 
                 <div sec:authorize="isAnonymous()" class="d-flex align-items-center gap-2">
+                    <a class="btn btn-outline-success btn-sm rounded-pill" href="/become-a-host">Become a host</a>
                     <a class="btn btn-outline-primary btn-sm rounded-pill" href="/login">Login</a>
                     <a class="btn btn-primary btn-sm rounded-pill" href="/register">Signup</a>
                 </div>

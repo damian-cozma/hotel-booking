@@ -9,10 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,10 +25,15 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import static com.damian.hotelbooking.entity.UserRole.ROLE_HOTEL_ADMIN;
+
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
@@ -32,27 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAllByOrderByLastNameAsc();
-    }
-
-    @Override
-    public User findById(Long theId) {
-        Optional<User> result = userRepository.findById(theId);
-
-        User user = null;
-
-        if (result.isPresent()) {
-            user = result.get();
-        } else {
-            throw new RuntimeException("Did not find user id - " + theId);
-        }
-
-        return user;
-    }
-
-    @Override
-    public User registerUser(@Valid SignupDto signupDto, BindingResult bindingResult) {
+    public void registerUser(@Valid SignupDto signupDto, BindingResult bindingResult) {
 
         if (userRepository.existsByEmail(signupDto.getEmail())) {
             bindingResult.rejectValue("email", "error.signupDto", "Email already registered");
@@ -67,7 +56,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (bindingResult.hasErrors()) {
-            return null;
+            return;
         }
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -83,11 +72,11 @@ public class UserServiceImpl implements UserService {
                 UserRole.ROLE_USER
         );
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
-    public User saveProfile(@Valid @ModelAttribute("profileDto") ProfileDto profileDto, Principal principal,
+    public void saveProfile(@Valid @ModelAttribute("profileDto") ProfileDto profileDto, Principal principal,
                             BindingResult bindingResult, Model model) {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + principal.getName()));
@@ -103,7 +92,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (bindingResult.hasErrors()) {
-            return null;
+            return;
         }
 
         user.setFirstName(profileDto.getFirstName());
@@ -111,17 +100,16 @@ public class UserServiceImpl implements UserService {
         user.setEmail(profileDto.getEmail());
         user.setPhoneNumber(profileDto.getPhoneNumber());
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
-    public User saveWithPasswordEncoding(User user) {
+    public void saveWithPasswordEncoding(User user) {
         if (user.getPassword() != null && !user.getPassword().startsWith("{bcrypt}")) {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             user.setPassword("{bcrypt}" + passwordEncoder.encode(user.getPassword()));
         }
-        user =  userRepository.save(user);
-        return user;
+        userRepository.save(user);
     }
 
     @Override
@@ -155,8 +143,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteAccount(Principal principal, HttpServletRequest request) {
-        User user = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found - " + principal.getName()));
+        User user = findByUsername(principal.getName());
 
         Long userId = user.getId();
 
@@ -170,20 +157,62 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String name) {
-        return userRepository.findByUsername(name).orElseThrow(() -> new UsernameNotFoundException("User not found: " + name));
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
-    }
-
-    @Override
     public ProfileDto getProfile(String name) {
-         User user = findByUsername(name);
+        User user = findByUsername(name);
+
         return new ProfileDto(
-                user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber()
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhoneNumber()
         );
+    }
+
+    @Override
+    public void assignHotelOwner(Principal principal) {
+
+        User user = findByUsername(principal.getName());
+
+        user.setRole(ROLE_HOTEL_ADMIN);
+        userRepository.save(user);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername()); // ia user's info
+        UsernamePasswordAuthenticationToken newAuth =
+                new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()); // logheaza utilizatorul w the updated info (role)
+        SecurityContextHolder.getContext().setAuthentication(newAuth); // refresh sesiune/auth propriu zis
+
+    }
+
+    @Override
+    public void deleteById(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
+    // Helper methods
+
+    @Override
+    public User findByUsername(String name) {
+        return userRepository.findByUsername(name).orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + name));
+    }
+
+    @Override
+    public User findById(Long theId) {
+        Optional<User> result = userRepository.findById(theId);
+
+        User user = null;
+        if (result.isPresent()) {
+            user = result.get();
+        } else {
+            throw new RuntimeException("Did not find user id - " + theId);
+        }
+
+        return user;
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAllByOrderByLastNameAsc();
     }
 }

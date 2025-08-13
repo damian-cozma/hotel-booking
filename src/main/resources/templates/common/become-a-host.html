@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Become a Host</title>
+  <link rel="stylesheet" href="/styles.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .get-started-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="common/layout :: navbar"></div>
+
+<div class="container py-5">
+  <h2 class="mb-4 text-primary">Become a Host</h2>
+  <div class="mb-4">
+    <p>
+      Hosting on <strong>roomie.</strong> is simple and rewarding. Here’s how the process works:
+    </p>
+    <ol>
+      <li>Activate your host account</li>
+      <li>Add your hotel details and amenities.</li>
+      <li>Submit your listing for review.</li>
+      <li>Start welcoming guests and manage bookings easily.</li>
+    </ol>
+    <p>
+      Our team will guide you through each step and help you maximize your hosting experience.
+    </p>
+  </div>
+  <div class="alert alert-info">
+    Ready to get started? Click the button below to add your first hotel!
+  </div>
+  <form th:action="@{/become-a-host}" method="post">
+    <button type="submit" class="btn btn-primary btn-lg rounded-pill float-start">
+      Get Started
+    </button>
+  </form>
+</div>
+
+<div th:replace="common/layout :: footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

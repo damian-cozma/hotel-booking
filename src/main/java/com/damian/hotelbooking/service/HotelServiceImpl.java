@@ -40,10 +40,6 @@ public class HotelServiceImpl implements HotelService {
             bindingResult.rejectValue("phoneNumber", "error.hotelDto", "Phone number already in use");
         }
 
-        if (hotelDto.getOwnerId() == null) {
-            bindingResult.rejectValue("ownerId", "error.hotelDto", "Owner is required");
-        }
-
         Hotel hotel = new Hotel();
         hotel.setName(hotelDto.getName());
         hotel.setCity(hotelDto.getCity());

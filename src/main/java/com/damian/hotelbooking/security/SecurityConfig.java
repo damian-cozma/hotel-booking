@@ -28,6 +28,7 @@ public class SecurityConfig {
                                 .requestMatchers("/users/**").hasRole("PLATFORM_ADMIN")
                                 .requestMatchers("/owner/**").hasAnyRole("HOTEL_ADMIN", "PLATFORM_ADMIN")
                                 .requestMatchers("/account").authenticated()
+                                .requestMatchers("/become-a-host").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .formLogin(form ->
