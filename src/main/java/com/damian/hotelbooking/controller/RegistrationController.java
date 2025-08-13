@@ -24,13 +24,13 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public String showRegistrationForm(Model model) {
+    public String showUserRegistrationForm(Model model) {
         model.addAttribute("signupDto", new SignupDto());
         return "auth/register";
     }
 
     @PostMapping
-    public String processRegistration(@Valid @ModelAttribute("signupDto") SignupDto signupDto,
+    public String userRegistration(@Valid @ModelAttribute("signupDto") SignupDto signupDto,
                                BindingResult bindingResult) {
 
         userService.registerUser(signupDto, bindingResult);

@@ -17,13 +17,13 @@
 
         <nav class="col-md-3 mb-4">
             <div class="list-group">
-                <a th:href="@{/profile(section='profile')}"
+                <a th:href="@{/account(section='profile')}"
                    th:classappend="${activeSection == 'profile'} ? ' active'"
                    class="list-group-item list-group-item-action">Profile</a>
-                <a th:href="@{/profile(section='security')}"
+                <a th:href="@{/account(section='security')}"
                    th:classappend="${activeSection == 'security'} ? ' active'"
                    class="list-group-item list-group-item-action">Security</a>
-                <a th:href="@{/profile(section='deactivate')}"
+                <a th:href="@{/account(section='deactivate')}"
                    th:classappend="${activeSection == 'deactivate'} ? ' active'"
                    class="list-group-item list-group-item-action text-danger">Deactivate Account</a>
             </div>
@@ -36,12 +36,13 @@
                     <h2>Your Profile</h2>
 
                     <div>
-                        <a th:href="@{/profile/edit}" class="btn btn-primary me-2" th:if="${!editable}">Edit Profile</a>
-                        <a th:href="@{/templates/profile}" class="btn btn-secondary" th:if="${editable}">Cancel</a>
+                        <a th:href="@{/account/edit}" class="btn btn-primary me-2" th:if="${!editable}">Edit Profile</a>
+                        <a th:href="@{/account}" class="btn btn-secondary" th:if="${editable}">Cancel</a>
                     </div>
                 </div>
 
-                <form th:action="@{/profile/edit}" th:object="${profileDto}" method="post" th:if="${editable}">
+                <form th:action="@{/account/edit}" th:object="${profileDto}" method="post" th:if="${editable}">
+                    <input type="hidden" name="_method" value="put"/>
                     <div class="p-4 bg-light border rounded shadow-sm">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
@@ -106,7 +107,7 @@
 
             <div th:if="${activeSection == 'security'}">
                 <h2>Change Password</h2>
-                <form th:action="@{/profile/change-password}" th:object="${passwordDto}" method="post">
+                <form th:action="@{/account/change-password}" th:object="${passwordDto}" method="post">
                     <div class="p-4 bg-light border rounded shadow-sm">
                         <div class="mb-3">
                             <label for="currentPassword" class="form-label">Current Password</label>
@@ -140,7 +141,7 @@
                     <div class="alert alert-danger">
                         <strong>Warning:</strong> This action cannot be undone. All your data will be permanently deleted.
                     </div>
-                    <form th:action="@{/profile/delete-account}" method="post">
+                    <form th:action="@{/account/delete-account}" method="post">
                         <button type="submit" class="btn btn-danger">Confirm Account Deactivation</button>
                     </form>
                 </div>

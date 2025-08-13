@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @Controller
-@RequestMapping("/profile")
+@RequestMapping("/account")
 public class UserController {
 
     private final UserService userService;
@@ -36,7 +36,7 @@ public class UserController {
             model.addAttribute("passwordDto", new PasswordDto());
         }
 
-        return "common/profile";
+        return "common/account";
     }
 
     @GetMapping("/edit")
@@ -46,10 +46,10 @@ public class UserController {
         model.addAttribute("profileDto", profileDto);
         model.addAttribute("editable", true);
         model.addAttribute("activeSection", "profile");
-        return "common/profile";
+        return "common/account";
     }
 
-    @PostMapping("/edit")
+    @PutMapping("/edit")
     public String editProfile(@Valid @ModelAttribute("profileDto") ProfileDto profileDto,
                               BindingResult bindingResult, Principal principal, Model model) {
 
@@ -61,9 +61,9 @@ public class UserController {
             model.addAttribute("user", user);
             model.addAttribute("editable", true);
             model.addAttribute("activeSection", "profile");
-            return "common/profile";
+            return "common/account";
         }
-        return "redirect:/profile";
+        return "redirect:/account?section=profile";
     }
 
     @PostMapping("/change-password")
@@ -75,13 +75,13 @@ public class UserController {
 
         if (!success) {
             model.addAttribute("activeSection", "security");
-            return "common/profile";
+            return "common/account";
         }
 
-        return "redirect:/profile?section=security";
+        return "redirect:/account?section=security";
     }
 
-    @PostMapping("/delete-account")
+    @DeleteMapping("/delete")
     public String deleteAccount(Principal principal, HttpServletRequest request) {
 
         userService.deleteAccount(principal, request);

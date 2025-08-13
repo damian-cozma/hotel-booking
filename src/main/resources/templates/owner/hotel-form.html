@@ -19,7 +19,7 @@
 
   <p class="h4 mb-4">Save Hotel</p>
 
-  <form th:action="@{/hotel/submitForm}" th:object="${hotelDto}" method="post">
+  <form th:action="@{/owner/hotels/new}" th:object="${hotelDto}" method="post">
     <input type="hidden" th:field="*{id}">
 
     <input type="text" th:field="*{name}" class="form-control mb-3 w-50" placeholder="Hotel Name">
