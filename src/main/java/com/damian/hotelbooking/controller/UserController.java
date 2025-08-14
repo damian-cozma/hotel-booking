@@ -70,10 +70,10 @@ public class UserController {
     public String changePassword(@Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
                                  BindingResult bindingResult, Principal principal, Model model) {
 
-        boolean success = userService.changePassword(principal, passwordDto.getCurrentPassword(),
+        userService.changePassword(principal, passwordDto.getCurrentPassword(),
                 passwordDto.getNewPassword(), passwordDto.getConfirmPassword(), bindingResult, model);
 
-        if (!success) {
+        if (bindingResult.hasErrors()) {
             model.addAttribute("activeSection", "security");
             return "common/account";
         }

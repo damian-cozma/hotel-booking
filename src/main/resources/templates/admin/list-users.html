@@ -13,6 +13,8 @@
 
 <div class="container">
 
+    <br><br>
+
     <h3>User Directory</h3>
     <hr>
     
@@ -21,8 +23,8 @@
     </a>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="table table-bordered">
+            <thead class="table-primary">
             <tr>
                 <th>Id</th>
                 <th>Username</th>
@@ -47,7 +49,7 @@
                 <td th:text="${user.role}"></td>
 
                 <td>
-                    <a th:href="@{/users/{userId}/edit(userId=${user.id})}" class="btn btn-info btn-sm">
+                    <a th:href="@{/users/{userId}/edit(userId=${user.id})}" class="btn btn-primary btn-sm">
                         Update
                     </a>
 
