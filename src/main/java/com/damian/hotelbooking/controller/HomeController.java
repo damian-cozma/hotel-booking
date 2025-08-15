@@ -41,13 +41,4 @@ public class HomeController {
         return "redirect:/owner/hotels/new";
     }
 
-    @GetMapping("/hotels")
-    public String listHotels(Model model) {
-
-        model.addAttribute("hotels", hotelService.listHotels());
-        return "common/hotels/list";
-
-    }
-
-
 }

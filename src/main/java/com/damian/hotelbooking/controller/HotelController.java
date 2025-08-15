@@ -1,0 +1,53 @@
+package com.damian.hotelbooking.controller;
+
+import com.damian.hotelbooking.dto.HotelDto;
+import com.damian.hotelbooking.service.HotelService;
+import com.damian.hotelbooking.service.UserService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/hotels")
+public class HotelController {
+
+    private final HotelService hotelService;
+
+    public HotelController(HotelService hotelService, UserService userService) {
+        this.hotelService = hotelService;
+    }
+
+    @GetMapping("/list")
+    public String listHotels(Model model) {
+
+        model.addAttribute("hotels", hotelService.listHotels());
+        return "common/hotels/list";
+
+    }
+
+    @GetMapping("/{hotelId}")
+    public String showHotelDetails(@PathVariable("hotelId") Long hotelId, Model model) {
+        HotelDto hotel = hotelService.findById(hotelId);
+        model.addAttribute("hotel", hotel);
+        return "common/hotels/hotel-details";
+    }
+
+    @GetMapping("/search")
+    public String searchHotels(
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "country", required = false) String country,
+            @RequestParam(value = "amenities", required = false)List<String> amenities,
+            Model model) {
+
+        List<HotelDto> hotels = hotelService.searchHotels(city, country, amenities);
+
+        model.addAttribute(hotels);
+
+        return "common/hotels/list";
+    }
+}

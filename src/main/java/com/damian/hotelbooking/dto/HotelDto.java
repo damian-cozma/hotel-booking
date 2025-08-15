@@ -1,11 +1,14 @@
 package com.damian.hotelbooking.dto;
 
+import com.damian.hotelbooking.entity.Amenity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -46,8 +49,10 @@ public class HotelDto {
 
     private Long ownerId;
 
-    private String amenities;
+    private Set<String> amenities;
 
     private Double rating;
+
+    private Double pricePerNight;
 }
 
