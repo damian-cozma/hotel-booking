@@ -1,6 +1,7 @@
 package com.damian.hotelbooking.controller;
 
 import com.damian.hotelbooking.dto.HotelDto;
+import com.damian.hotelbooking.service.AmenityService;
 import com.damian.hotelbooking.service.HotelService;
 import com.damian.hotelbooking.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -17,17 +18,18 @@ import java.util.List;
 public class HotelController {
 
     private final HotelService hotelService;
+    private final AmenityService amenityService;
 
-    public HotelController(HotelService hotelService, UserService userService) {
+    public HotelController(HotelService hotelService, UserService userService, AmenityService amenityService) {
         this.hotelService = hotelService;
+        this.amenityService = amenityService;
     }
 
     @GetMapping("/list")
     public String listHotels(Model model) {
-
         model.addAttribute("hotels", hotelService.listHotels());
+        model.addAttribute("allAmenities", amenityService.findAllAmenities());
         return "common/hotels/list";
-
     }
 
     @GetMapping("/{hotelId}")
@@ -39,14 +41,14 @@ public class HotelController {
 
     @GetMapping("/search")
     public String searchHotels(
-            @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "country", required = false) String country,
-            @RequestParam(value = "amenities", required = false)List<String> amenities,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "amenities", required = false) List<String> amenities,
             Model model) {
 
-        List<HotelDto> hotels = hotelService.searchHotels(city, country, amenities);
-
-        model.addAttribute(hotels);
+        List<HotelDto> hotels = hotelService.searchHotels(country, city, amenities);
+        model.addAttribute("hotels", hotels);
+        model.addAttribute("allAmenities", amenityService.findAllAmenities());
 
         return "common/hotels/list";
     }

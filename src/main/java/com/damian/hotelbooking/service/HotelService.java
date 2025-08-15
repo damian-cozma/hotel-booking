@@ -15,7 +15,7 @@ public interface HotelService {
 
     HotelDto findById(Long hotelId);
 
-    List<HotelDto> searchHotels(String city, String country, List<String> amenities);
+    List<HotelDto> searchHotels(String country, String city, List<String> amenities);
 
     public HotelDto toHotelDto(Hotel hotel);
 

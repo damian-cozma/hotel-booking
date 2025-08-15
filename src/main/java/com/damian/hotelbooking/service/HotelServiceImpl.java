@@ -90,8 +90,21 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public List<HotelDto> searchHotels(String city, String country, List<String> amenities) {
-        return List.of();
+    public List<HotelDto> searchHotels(String country, String city, List<String> amenities) {
+        return hotelRepository.findAll()
+                .stream()
+                .filter(hotel -> country == null || country.isBlank() || hotel.getCountry().equalsIgnoreCase(country))
+                .filter(hotel -> city == null || city.isBlank() || hotel.getCity().equalsIgnoreCase(city))
+                .filter(hotel -> {
+                    if (amenities == null || amenities.isEmpty()) return true;
+                    Set<String> hotelAmenities = hotel.getAmenities()
+                            .stream()
+                            .map(Amenity::getName)
+                            .collect(Collectors.toSet());
+                    return hotelAmenities.containsAll(amenities);
+                })
+                .map(this::toHotelDto)
+                .collect(Collectors.toList());
     }
 
     // Mappere HotelDto <-> Hotel

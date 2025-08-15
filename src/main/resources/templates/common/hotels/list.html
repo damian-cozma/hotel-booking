@@ -13,50 +13,85 @@
 
 <main class="flex-grow-1 container mt-4">
 
-    <div class="container">
-        <h3 class="mb-4">Hotels List</h3>
+    <div class="card p-3 mb-4 shadow-sm">
+        <h5 class="mb-3">Search Hotels</h5>
+        <form th:action="@{/hotels/search}" method="get" class="row g-3">
+            <div class="col-md-3">
+                <input type="text" name="country" class="form-control" placeholder="Country"
+                       th:value="${param.country}">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="city" class="form-control" placeholder="City" th:value="${param.city}">
+            </div>
 
-        <div class="row row-cols-1 row-cols-md-1 g-4">
-            <div class="col" th:each="hotel : ${hotels}">
-                <div class="card h-100">
-                    <div class="row g-0 align-items-center">
-                        <div class="col-md-3 text-center">
-                            <img src="/images/hotel-placeholder.jpg" class="img-fluid rounded-start p-2" alt="Hotel Image">
-                        </div>
+            <div class="col-md-6 position-relative">
+                <button type="button" class="btn btn-outline-secondary w-100" id="amenitiesBtn">
+                    Select Amenities
+                </button>
+                <div id="amenitiesPanel" class="border rounded p-2 position-absolute bg-white"
+                     style="display:none; max-height: 200px; overflow-y: auto; z-index:100;">
+                    <div class="form-check" th:each="amenity : ${allAmenities}">
+                        <input class="form-check-input" type="checkbox" name="amenities" th:value="${amenity}"
+                               th:checked="${param.amenities != null and #arrays.contains(param.amenities, amenity)}"
+                               th:id="'amenity_' + ${amenity}">
+                        <label class="form-check-label" th:for="'amenity_' + ${amenity}" th:text="${amenity}">Amenity</label>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="col-md-9">
-                            <div class="card-body d-flex flex-column justify-content-between py-3">
-                                <div>
-                                    <h5 class="card-title mb-3" th:text="${hotel.name}">Hotel Name</h5>
+            <script>
+                const btn = document.getElementById('amenitiesBtn');
+                const panel = document.getElementById('amenitiesPanel');
 
-                                    <p class="card-text mb-2">
-                                        <strong>Address:</strong>
-                                        <span th:text="${hotel.street + ', ' + hotel.city + ', ' + hotel.country}">Street, City, Country</span>
-                                    </p>
+                btn.addEventListener('click', () => {
+                    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                });
 
-                                    <p class="card-text mb-2">
-                                        <strong>Description:</strong>
-                                        <span th:text="${hotel.description}">Hotel description...</span>
-                                    </p>
+                document.addEventListener('click', (e) => {
+                    if (!btn.contains(e.target) && !panel.contains(e.target)) {
+                        panel.style.display = 'none';
+                    }
+                });
+            </script>
 
-                                    <p class="card-text mb-3">
-                                        <strong>Rating:</strong>
-                                        <span th:text="${hotel.rating}">Hotel rating...</span>
-                                    </p>
+            <div class="col-12 mt-2">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </form>
+    </div>
 
-                                    <div class="d-flex flex-wrap" style="gap: 0.25rem;">
-                                        <strong>Amenities:</strong>
-                                        <span th:each="amenity : ${hotel.amenities}"
-                                              class="badge bg-primary me-1 mb-1"
-                                              th:text="${amenity}">Amenity</span>
-                                    </div>
-                                </div>
+    <h5 class="mb-3">Hotels List</h5>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="hotel : ${hotels}">
+            <div class="card h-100 shadow-sm">
+                <img src="/images/hotel-placeholder.jpg" class="card-img-top" alt="Hotel Image">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title" th:text="${hotel.name}"></h5>
 
-                                <div class="card-footer text-end bg-white border-top-0 mt-3">
-                                    <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-sm btn-info">View</a>
-                                </div>
-                            </div>
-                        </div>
+                    <p class="card-text mb-1">
+                        <strong>Address:</strong> <span
+                            th:text="${hotel.street + ', ' + hotel.city + ', ' + hotel.country}"></span>
+                    </p>
+                    <p class="card-text mb-2">
+                        <strong>Description:</strong> <span th:text="${hotel.description}"></span>
+                    </p>
+                    <p class="card-text mb-2">
+                        <strong>Rating:</strong> <span th:text="${hotel.rating}"></span>
+                    </p>
+
+                    <div class="mb-2">
+                        <strong>Amenities:</strong>
+                        <span th:each="amenity, iterStat : ${hotel.amenities}"
+                              th:if="${iterStat.index < 3}"
+                              class="badge bg-primary me-1 mb-1" th:text="${amenity}"></span>
+
+                        <span th:if="${hotel.amenities.size() > 3}" class="text-muted">+
+                            <span th:text="${hotel.amenities.size() - 3}"></span> more</span>
+                    </div>
+
+
+                    <div class="mt-auto text-end">
+                        <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-sm btn-info">View</a>
                     </div>
                 </div>
             </div>
@@ -65,7 +100,9 @@
 
 </main>
 
+<br>
 
 <div th:replace="common/layout :: footer"></div>
+
 </body>
 </html>
