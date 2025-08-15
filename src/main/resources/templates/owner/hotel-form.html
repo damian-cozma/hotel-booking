@@ -62,6 +62,12 @@
       <span th:errors="*{description}"></span>
     </div>
 
+    <textarea th:field="*{amenities}" class="form-control mb-3 w-50" placeholder="Amenities (comma separated)"></textarea>
+    <div th:if="${#fields.hasErrors('amenities')}" class="text-danger small mb-2">
+      <span th:errors="*{amenities}"></span>
+    </div>
+
+
     <button type="submit" class="btn btn-info col-2">Save</button>
   </form>
 

@@ -1,20 +1,26 @@
 package com.damian.hotelbooking.controller;
 
+import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.entity.User;
+import com.damian.hotelbooking.service.HotelService;
 import com.damian.hotelbooking.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class HomeController {
 
     private final UserService userService;
+    private final HotelService hotelService;
 
-    public HomeController(UserService userService) {
+    public HomeController(UserService userService, HotelService hotelService) {
         this.userService = userService;
+        this.hotelService = hotelService;
     }
 
     @GetMapping("/")
@@ -34,5 +40,14 @@ public class HomeController {
 
         return "redirect:/owner/hotels/new";
     }
+
+    @GetMapping("/hotels")
+    public String listHotels(Model model) {
+
+        model.addAttribute("hotels", hotelService.listHotels());
+        return "common/hotels/list";
+
+    }
+
 
 }
