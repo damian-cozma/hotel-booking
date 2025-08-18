@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveProfile(@Valid @ModelAttribute("profileDto") ProfileDto profileDto, Principal principal,
                             BindingResult bindingResult, Model model) {
+
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + principal.getName()));
 

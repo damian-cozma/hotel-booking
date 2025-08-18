@@ -83,8 +83,8 @@ public class UserController {
     public String deleteAccount(Principal principal, HttpServletRequest request) {
 
         userService.deleteAccount(principal, request);
-
         return "redirect:/";
+
     }
 
     @GetMapping("/notifications")
