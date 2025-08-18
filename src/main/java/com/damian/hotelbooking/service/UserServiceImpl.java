@@ -112,9 +112,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
-        if (user.getPassword() != null && !user.getPassword().startsWith("{bcrypt}")) {
+        if (user.getPassword() != null && !user.getPassword().isBlank() && !user.getPassword().startsWith("{bcrypt}")) {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             user.setPassword("{bcrypt}" + passwordEncoder.encode(user.getPassword()));
+        } else if (user.getPassword() == null || user.getPassword().isBlank()) {
+            User existing = userRepository.findById(user.getId()).orElseThrow();
+            user.setPassword(existing.getPassword());
         }
         userRepository.save(user);
     }
