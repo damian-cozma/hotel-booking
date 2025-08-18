@@ -148,6 +148,7 @@ public class HotelServiceImpl implements HotelService {
                 .map(Amenity::getName)
                 .collect(Collectors.toSet());
         hotelDto.setAmenities(amenities);
+        hotelDto.setRooms(hotel.getRooms());
 
         return hotelDto;
     }

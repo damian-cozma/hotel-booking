@@ -1,6 +1,7 @@
 package com.damian.hotelbooking.dto;
 
 import com.damian.hotelbooking.entity.Amenity;
+import com.damian.hotelbooking.entity.Room;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -54,5 +55,7 @@ public class HotelDto {
     private Double rating;
 
     private Double pricePerNight;
+
+    private Set<Room> rooms;
 }
 

@@ -1,12 +1,17 @@
 package com.damian.hotelbooking.controller;
 
 import com.damian.hotelbooking.dto.HotelDto;
+import com.damian.hotelbooking.dto.RoomDto;
 import com.damian.hotelbooking.entity.Hotel;
+import com.damian.hotelbooking.entity.Room;
+import com.damian.hotelbooking.entity.RoomType;
 import com.damian.hotelbooking.entity.User;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.UserRepository;
 import com.damian.hotelbooking.service.HotelService;
+import com.damian.hotelbooking.service.RoomService;
 import jakarta.validation.Valid;
+import org.h2.engine.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,10 +25,12 @@ public class OwnerHotelController {
 
     private final HotelService hotelService;
     private final HotelRepository hotelRepository;
+    private final RoomService roomService;
 
-    public OwnerHotelController(HotelService hotelService, HotelRepository hotelRepository) {
+    public OwnerHotelController(HotelService hotelService, HotelRepository hotelRepository, RoomService roomService) {
         this.hotelService = hotelService;
         this.hotelRepository = hotelRepository;
+        this.roomService = roomService;
     }
 
     @GetMapping("/new")
@@ -59,7 +66,9 @@ public class OwnerHotelController {
     }
 
     @GetMapping("/edit/{hotelId}")
-    public String showUpdateHotelForm(@PathVariable Long hotelId, Model model, Principal principal) {
+    public String showUpdateHotelForm(@PathVariable Long hotelId,
+                                      Model model,
+                                      Principal principal) {
 
         model.addAttribute("hotelDto", hotelService.findById(hotelId));
         return "owner/hotel-form";
@@ -85,4 +94,44 @@ public class OwnerHotelController {
         return "redirect:/owner/hotels/list";
 
     }
+
+    @GetMapping("/{hotelId}/rooms")
+    public String listRooms(@PathVariable("hotelId") Long hotelId, Model model) {
+
+        HotelDto hotel = hotelService.findById(hotelId);
+        model.addAttribute("hotel", hotel);
+        model.addAttribute("rooms", hotel.getRooms());
+        return "owner/rooms/list";
+
+    }
+
+    @GetMapping("/{hotelId}/rooms/add")
+    public String showAddRoomForm(@PathVariable("hotelId") Long hotelId, Model model) {
+        RoomDto roomDto = new RoomDto();
+        roomDto.setHotelId(hotelId);
+
+        model.addAttribute("room", roomDto);
+        model.addAttribute("roomTypes", RoomType.values());
+
+        return "owner/rooms/add";
+    }
+
+
+    @PostMapping("/{hotelId}/rooms/add")
+    public String addRoom(@PathVariable("hotelId") Long hotelId,
+                          Model model,
+                          @Valid @ModelAttribute("room") RoomDto roomDto,
+                          BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            System.out.println("Room form errors: " + bindingResult.getAllErrors());
+            return "owner/rooms/add";
+        }
+
+        roomDto.setHotelId(hotelId);
+        roomService.addRoom(roomDto, bindingResult);
+
+        return "redirect:/owner/hotels/" + hotelId + "/rooms";
+    }
+
 }

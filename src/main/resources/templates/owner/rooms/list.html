@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Camere Hotel [[${hotel.name}]]</title>
+    <link rel="stylesheet" href="/styles.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+
+<div th:replace="common/layout :: navbar"></div>
+
+<div class="container mt-4">
+    <h3>Camere hotel: <span th:text="${hotel.name}">Hotel Name</span></h3>
+    <hr>
+
+    <div class="mb-3">
+        <a th:href="@{'/owner/hotels/' + ${hotel.id} + '/rooms/add'}" class="btn btn-primary">Adaugă Cameră Nouă</a>
+        <a th:href="@{/owner/hotels/list}" class="btn btn-secondary">Înapoi la Hoteluri</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Type</th>
+            <th>Capacity</th>
+            <th>Price Per Night</th>
+            <th>Availability</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="room : ${rooms}">
+            <td th:text="${room.type}">Tip</td>
+            <td th:text="${room.capacity}">Capacitate</td>
+            <td th:text="${room.price}">Preț</td>
+            <td th:text="${room.available} ? 'Da' : 'Nu'">Disponibil</td>
+            <td>
+                <a th:href="@{'/owner/hotels/' + ${hotel.id} + '/rooms/edit/' + ${room.id}}"
+                   class="btn btn-sm btn-warning">Edit</a>
+                <form th:action="@{'/owner/hotels/' + ${hotel.id} + '/rooms/delete/' + ${room.id}}"
+                      method="post" style="display:inline">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Sigur vrei să ștergi această cameră?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(rooms)}">
+            <td colspan="5" class="text-center">Nu există camere adăugate încă.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="common/layout :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

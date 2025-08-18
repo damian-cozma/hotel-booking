@@ -1,8 +1,10 @@
 package com.damian.hotelbooking.controller;
 
 import com.damian.hotelbooking.dto.HotelDto;
+import com.damian.hotelbooking.repository.RoomRepository;
 import com.damian.hotelbooking.service.AmenityService;
 import com.damian.hotelbooking.service.HotelService;
+import com.damian.hotelbooking.service.RoomService;
 import com.damian.hotelbooking.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,10 +21,14 @@ public class HotelController {
 
     private final HotelService hotelService;
     private final AmenityService amenityService;
+    private final RoomService roomService;
+    private final RoomRepository roomRepository;
 
-    public HotelController(HotelService hotelService, UserService userService, AmenityService amenityService) {
+    public HotelController(HotelService hotelService, UserService userService, AmenityService amenityService, RoomService roomService, RoomRepository roomRepository) {
         this.hotelService = hotelService;
         this.amenityService = amenityService;
+        this.roomService = roomService;
+        this.roomRepository = roomRepository;
     }
 
     @GetMapping("/list")
@@ -37,7 +43,9 @@ public class HotelController {
     @GetMapping("/{hotelId}")
     public String showHotelDetails(@PathVariable("hotelId") Long hotelId, Model model) {
 
-        model.addAttribute("hotel", hotelService.findById(hotelId));
+        HotelDto hotelDto = hotelService.findById(hotelId);
+        model.addAttribute("hotel", hotelDto);
+        model.addAttribute("rooms", hotelDto.getRooms());
         return "common/hotels/hotel-details";
 
     }
