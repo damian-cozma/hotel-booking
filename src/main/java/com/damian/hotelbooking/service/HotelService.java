@@ -17,7 +17,9 @@ public interface HotelService {
 
     List<HotelDto> searchHotels(String country, String city, List<String> amenities);
 
-    public HotelDto toHotelDto(Hotel hotel);
+    HotelDto toHotelDto(Hotel hotel);
 
-    public Hotel toHotel(HotelDto hotelDto);
+    Hotel toHotel(HotelDto hotelDto);
+
+    List<HotelDto> findAllByOwnerId(Principal principal);
 }

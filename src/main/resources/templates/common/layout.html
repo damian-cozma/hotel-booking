@@ -55,8 +55,8 @@
                         </li>
 
                         <li sec:authorize="hasRole('HOTEL_ADMIN')">
-                            <a class="dropdown-item btn btn-warning text-dark" href="/hotel/submitForm">
-                                Manage Hotel
+                            <a class="dropdown-item btn btn-warning text-dark" th:href="@{/owner/hotels/list}">
+                                My Listings
                             </a>
                         </li>
 

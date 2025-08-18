@@ -46,17 +46,25 @@ public class HotelServiceImpl implements HotelService {
             return;
         }
 
-        if (hotelRepository.existsByEmail(hotelDto.getEmail())) {
-            bindingResult.rejectValue("email", "error.hotelDto", "Email already registered");
-            return;
+        Hotel hotel;
+        if (hotelDto.getId() != null) {
+            hotel = hotelRepository.findById(hotelDto.getId())
+                    .orElseThrow(() -> new RuntimeException("Hotel not found"));
+        } else {
+            hotel = new Hotel();
+            hotel.setRating(0.0);
         }
 
-        if (hotelRepository.existsByPhoneNumber(hotelDto.getPhoneNumber())) {
-            bindingResult.rejectValue("phoneNumber", "error.hotelDto", "Phone number already in use");
-            return;
-        }
+        hotel.setName(hotelDto.getName());
+        hotel.setCity(hotelDto.getCity());
+        hotel.setCountry(hotelDto.getCountry());
+        hotel.setStreet(hotelDto.getStreet());
+        hotel.setPostalCode(hotelDto.getPostalCode());
+        hotel.setPhoneNumber(hotelDto.getPhoneNumber());
+        hotel.setEmail(hotelDto.getEmail());
+        hotel.setDescription(hotelDto.getDescription());
+        hotel.setOwner(userService.findById(hotelDto.getOwnerId()));
 
-        Hotel hotel = toHotel(hotelDto);
         Set<String> amenities = hotelDto.getAmenities();
         if (amenities == null) {
             amenities = Collections.emptySet();
@@ -70,8 +78,10 @@ public class HotelServiceImpl implements HotelService {
                 .collect(Collectors.toSet());
 
         hotel.setAmenities(amenitySet);
+
         hotelRepository.save(hotel);
     }
+
 
     @Override
     public List<HotelDto> listHotels() {
@@ -107,6 +117,18 @@ public class HotelServiceImpl implements HotelService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<HotelDto> findAllByOwnerId(Principal principal) {
+        Long ownerId = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Not found"))
+                .getId();
+
+        List<Hotel> hotels = hotelRepository.findAllByOwnerId(ownerId);
+        return hotels.stream()
+                .map(this::toHotelDto)
+                .toList();
+    }
+
     // Mappere HotelDto <-> Hotel
 
     @Override
@@ -116,6 +138,9 @@ public class HotelServiceImpl implements HotelService {
         hotelDto.setName(hotel.getName());
         hotelDto.setCountry(hotel.getCountry());
         hotelDto.setCity(hotel.getCity());
+        hotelDto.setPostalCode(hotel.getPostalCode());
+        hotelDto.setPhoneNumber(hotel.getPhoneNumber());
+        hotelDto.setEmail(hotel.getEmail());
         hotelDto.setStreet(hotel.getStreet());
         hotelDto.setDescription(hotel.getDescription());
         hotelDto.setRating(hotel.getRating());
