@@ -40,20 +40,17 @@
                         Hotel description goes here.
                     </p>
 
-                    <h5 class="mt-4">Facilități:</h5>
+                    <h5 class="mt-4">Amenities:</h5>
                     <ul class="list-unstyled mb-4">
                         <li th:each="amenity : ${hotel.amenities}">
                             <i class="bi bi-check-circle text-success"></i>
-                            <span th:text="${amenity}">Free WiFi</span>
+                            <span th:text="${amenity}"></span>
                         </li>
                     </ul>
 
                     <div class="mt-auto d-flex justify-content-between align-items-center">
-                        <h4 class="text-primary mb-0" th:text="'$' + ${hotel.pricePerNight} + '/noapte'">
-                            $100/noapte</h4>
+                        <h4 class="text-primary mb-0" th:text="'From $' + ${hotel.pricePerNight} + '/night'"></h4>
                         <div class="d-flex gap-2">
-                            <a href="#" class="btn btn-primary btn-lg">Rezervă acum</a>
-
                             <a th:href="@{/owner/hotels/{hotelId}/rooms/add(hotelId=${hotel.id})}"
                                class="btn btn-outline-warning btn-lg"
                                sec:authorize="hasRole('HOTEL_ADMIN')">
@@ -81,18 +78,18 @@
             <td th:text="${room.type}">Tip</td>
             <td th:text="${room.capacity}">Capacitate</td>
             <td th:text="${room.price}">Preț</td>
-            <td th:text="${room.available} ? 'Da' : 'Nu'">Disponibil</td>
+            <td th:text="${room.available} ? 'Yes' : 'No'">Available</td>
             <td>
                 <button type="submit" class="btn btn-sm btn-secondary">
                     View
                 </button>
-                <button type="submit" class="btn btn-sm btn-primary">
-                    Book
-                </button>
+                <a th:if="${room.available}"
+                   th:href="@{/hotels/{hotelId}/rooms/{roomId}/book(hotelId=${hotel.id}, roomId=${room.id})}"
+                   class="btn btn-primary btn-sm">Book</a>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(rooms)}">
-            <td colspan="5" class="text-center">Nu există camere adăugate încă.</td>
+            <td colspan="5" class="text-center">There are no available rooms for this listing.</td>
         </tr>
         </tbody>
     </table>

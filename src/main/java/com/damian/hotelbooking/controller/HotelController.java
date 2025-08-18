@@ -1,18 +1,18 @@
 package com.damian.hotelbooking.controller;
 
+import com.damian.hotelbooking.dto.BookingDto;
 import com.damian.hotelbooking.dto.HotelDto;
+import com.damian.hotelbooking.entity.Booking;
+import com.damian.hotelbooking.entity.Room;
 import com.damian.hotelbooking.repository.RoomRepository;
-import com.damian.hotelbooking.service.AmenityService;
-import com.damian.hotelbooking.service.HotelService;
-import com.damian.hotelbooking.service.RoomService;
-import com.damian.hotelbooking.service.UserService;
+import com.damian.hotelbooking.service.*;
+import org.h2.engine.Mode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -21,14 +21,19 @@ public class HotelController {
 
     private final HotelService hotelService;
     private final AmenityService amenityService;
+    private final UserService userService;
+    private final BookingService bookingService;
     private final RoomService roomService;
-    private final RoomRepository roomRepository;
 
-    public HotelController(HotelService hotelService, UserService userService, AmenityService amenityService, RoomService roomService, RoomRepository roomRepository) {
+    public HotelController(HotelService hotelService,
+                           AmenityService amenityService,
+                           UserService userService,
+                           BookingService bookingService, RoomService roomService) {
         this.hotelService = hotelService;
         this.amenityService = amenityService;
+        this.userService = userService;
+        this.bookingService = bookingService;
         this.roomService = roomService;
-        this.roomRepository = roomRepository;
     }
 
     @GetMapping("/list")
@@ -62,5 +67,47 @@ public class HotelController {
 
         return "common/hotels/list";
 
+    }
+
+    @GetMapping("/{hotelId}/rooms/{roomId}/book")
+    public String showBookingForm(@PathVariable Long hotelId,
+                                  @PathVariable Long roomId,
+                                  Principal principal,
+                                  Model model) {
+
+        model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
+        model.addAttribute("hotelId", hotelId);
+        model.addAttribute("roomId", roomId);
+        Room room = roomService.findById(roomId);
+        model.addAttribute("roomPrice", room.getPrice());
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setUserId(userService.findByUsername(principal.getName()).getId());
+        bookingDto.setRoomId(roomId);
+        model.addAttribute("booking", bookingDto);
+
+        return "common/hotels/book";
+
+    }
+
+    @PostMapping("/{hotelId}/rooms/{roomId}/book")
+    public String booking(@PathVariable Long hotelId,
+                          @PathVariable Long roomId,
+                          @ModelAttribute("booking") BookingDto bookingDto,
+                          BindingResult bindingResult,
+                          Principal principal,
+                          Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
+            model.addAttribute("hotelId", hotelId);
+            model.addAttribute("roomId", roomId);
+            Room room = roomService.findById(roomId);
+            model.addAttribute("roomPrice", room.getPrice());
+
+            return "common/hotels/book";
+        }
+
+        bookingService.createBooking(bookingDto, bindingResult);
+        return "redirect:/hotels/" + hotelId;
     }
 }

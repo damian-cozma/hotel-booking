@@ -89,6 +89,8 @@
                             <span th:text="${hotel.amenities.size() - 3}"></span> more</span>
                     </div>
 
+                    <td th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'Fully booked'"></td>
+
 
                     <div class="mt-auto text-end">
                         <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-sm btn-info">View</a>

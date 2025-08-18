@@ -64,4 +64,12 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.save(room);
     }
 
+    @Override
+    public Room findById(Long roomId) {
+
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+
+    }
+
 }

@@ -92,10 +92,16 @@ public class UserServiceImpl implements UserService {
             bindingResult.rejectValue("email", "error.profileDto", "Email already registered");
         }
 
+        if (!user.getUsername().equals(profileDto.getUsername()) &&
+                userRepository.existsByUsername(profileDto.getUsername())) {
+            bindingResult.rejectValue("username", "error.profileDto", "Username already in use");
+        }
+
         if (bindingResult.hasErrors()) {
             return;
         }
 
+        user.setUsername(profileDto.getUsername());
         user.setFirstName(profileDto.getFirstName());
         user.setLastName(profileDto.getLastName());
         user.setEmail(profileDto.getEmail());

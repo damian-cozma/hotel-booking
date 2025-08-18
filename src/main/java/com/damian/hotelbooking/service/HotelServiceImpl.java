@@ -3,6 +3,7 @@ package com.damian.hotelbooking.service;
 import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.entity.Amenity;
 import com.damian.hotelbooking.entity.Hotel;
+import com.damian.hotelbooking.entity.Room;
 import com.damian.hotelbooking.repository.AmenityRepository;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.UserRepository;
@@ -96,7 +97,9 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new UsernameNotFoundException("Hotel not found"));
 
-        return toHotelDto(hotel);
+        HotelDto dto = toHotelDto(hotel);
+
+        return dto;
     }
 
     @Override
@@ -149,6 +152,16 @@ public class HotelServiceImpl implements HotelService {
                 .collect(Collectors.toSet());
         hotelDto.setAmenities(amenities);
         hotelDto.setRooms(hotel.getRooms());
+
+        if (hotel.getRooms() != null && !hotel.getRooms().isEmpty()) {
+            hotelDto.setPricePerNight(
+                    hotel.getRooms().stream()
+                            .filter(Room::isAvailable)
+                            .map(Room::getPrice)
+                            .min(Double::compare)
+                            .orElse(null)
+            );
+        }
 
         return hotelDto;
     }

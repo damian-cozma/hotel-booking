@@ -19,8 +19,10 @@ public class HomeController {
     private final HotelService hotelService;
 
     public HomeController(UserService userService, HotelService hotelService) {
+
         this.userService = userService;
         this.hotelService = hotelService;
+
     }
 
     @GetMapping("/")
