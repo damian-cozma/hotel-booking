@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveWithPasswordEncoding(User user) {
+    public void save(User user) {
         if (user.getPassword() != null && !user.getPassword().startsWith("{bcrypt}")) {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             user.setPassword("{bcrypt}" + passwordEncoder.encode(user.getPassword()));

@@ -19,19 +19,19 @@ import java.security.Principal;
 public class OwnerHotelController {
 
     private final HotelService hotelService;
-    private final UserRepository userRepository;
     private final HotelRepository hotelRepository;
 
-    public OwnerHotelController(HotelService hotelService, UserRepository userRepository, HotelRepository hotelRepository) {
+    public OwnerHotelController(HotelService hotelService, HotelRepository hotelRepository) {
         this.hotelService = hotelService;
-        this.userRepository = userRepository;
         this.hotelRepository = hotelRepository;
     }
 
     @GetMapping("/new")
     public String showCreateHotelForm(Model model) {
+
         model.addAttribute("hotelDto", new HotelDto());
         return "owner/hotel-form";
+
     }
 
     @PostMapping("/new")
@@ -63,6 +63,7 @@ public class OwnerHotelController {
 
         model.addAttribute("hotelDto", hotelService.findById(hotelId));
         return "owner/hotel-form";
+
     }
 
     @PutMapping("/{hotelId}/edit")
@@ -70,14 +71,18 @@ public class OwnerHotelController {
                               @Valid @ModelAttribute("hotelDto") HotelDto hotelDto,
                               BindingResult bindingResult,
                               Principal principal) {
+
         if (bindingResult.hasErrors()) return "owner/hotel-form";
         hotelService.addHotel(hotelDto, bindingResult, principal);
         return "redirect:/owner/hotels/list";
+
     }
 
     @DeleteMapping("/{hotelId}")
     public String deleteHotel(@PathVariable("hotelId") Long userId) {
+
         hotelRepository.deleteById(userId);
         return "redirect:/owner/hotels/list";
+
     }
 }

@@ -37,8 +37,8 @@ public class HomeController {
     public String becomeAHost(Principal principal) {
 
         userService.assignHotelOwner(principal);
-
         return "redirect:/owner/hotels/new";
+
     }
 
 }

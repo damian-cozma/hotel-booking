@@ -41,12 +41,12 @@ public class UserController {
 
     @GetMapping("/edit")
     public String editProfile(Model model, Principal principal) {
-        ProfileDto profileDto = userService.getProfile(principal.getName());
 
-        model.addAttribute("profileDto", profileDto);
+        model.addAttribute("profileDto", userService.getProfile(principal.getName()));
         model.addAttribute("editable", true);
         model.addAttribute("activeSection", "profile");
         return "common/account";
+
     }
 
     @PutMapping("/edit")
@@ -56,9 +56,7 @@ public class UserController {
         userService.saveProfile(profileDto, principal, bindingResult, model);
 
         if (bindingResult.hasErrors()) {
-            User user = userService.findByUsername(principal.getName());
-
-            model.addAttribute("user", user);
+            model.addAttribute("user", userService.findByUsername(principal.getName()));
             model.addAttribute("editable", true);
             model.addAttribute("activeSection", "profile");
             return "common/account";

@@ -27,16 +27,19 @@ public class HotelController {
 
     @GetMapping("/list")
     public String listHotels(Model model) {
+
         model.addAttribute("hotels", hotelService.listHotels());
         model.addAttribute("allAmenities", amenityService.findAllAmenities());
         return "common/hotels/list";
+
     }
 
     @GetMapping("/{hotelId}")
     public String showHotelDetails(@PathVariable("hotelId") Long hotelId, Model model) {
-        HotelDto hotel = hotelService.findById(hotelId);
-        model.addAttribute("hotel", hotel);
+
+        model.addAttribute("hotel", hotelService.findById(hotelId));
         return "common/hotels/hotel-details";
+
     }
 
     @GetMapping("/search")
@@ -46,10 +49,10 @@ public class HotelController {
             @RequestParam(value = "amenities", required = false) List<String> amenities,
             Model model) {
 
-        List<HotelDto> hotels = hotelService.searchHotels(country, city, amenities);
-        model.addAttribute("hotels", hotels);
+        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities));
         model.addAttribute("allAmenities", amenityService.findAllAmenities());
 
         return "common/hotels/list";
+
     }
 }

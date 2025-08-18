@@ -22,7 +22,7 @@ public interface UserService {
 
     User findById(Long theId);
 
-    void saveWithPasswordEncoding(User user);
+    void save(User user);
 
     boolean changePassword(Principal principal, String currentPassword, String newPassword,
                            String confirmPassword, BindingResult bindingResult, Model model);
