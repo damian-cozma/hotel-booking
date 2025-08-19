@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -78,11 +79,17 @@ public class HotelController {
         model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
         model.addAttribute("hotelId", hotelId);
         model.addAttribute("roomId", roomId);
+
         Room room = roomService.findById(roomId);
         model.addAttribute("roomPrice", room.getPrice());
+
         BookingDto bookingDto = new BookingDto();
         bookingDto.setUserId(userService.findByUsername(principal.getName()).getId());
+
         bookingDto.setRoomId(roomId);
+        List<LocalDate[]> unavailableDates = roomService.getUnavailableDateRanges(roomId);
+        model.addAttribute("unavailableDates", unavailableDates);
+
         model.addAttribute("booking", bookingDto);
 
         return "common/hotels/book";
@@ -103,11 +110,20 @@ public class HotelController {
             model.addAttribute("roomId", roomId);
             Room room = roomService.findById(roomId);
             model.addAttribute("roomPrice", room.getPrice());
-
             return "common/hotels/book";
         }
 
         bookingService.createBooking(bookingDto, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
+            model.addAttribute("hotelId", hotelId);
+            model.addAttribute("roomId", roomId);
+            Room room = roomService.findById(roomId);
+            model.addAttribute("roomPrice", room.getPrice());
+            return "common/hotels/book";
+        }
+
         return "redirect:/hotels/" + hotelId;
     }
 }

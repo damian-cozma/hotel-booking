@@ -83,8 +83,7 @@
                 <button type="submit" class="btn btn-sm btn-secondary">
                     View
                 </button>
-                <a th:if="${room.available}"
-                   th:href="@{/hotels/{hotelId}/rooms/{roomId}/book(hotelId=${hotel.id}, roomId=${room.id})}"
+                <a th:href="@{/hotels/{hotelId}/rooms/{roomId}/book(hotelId=${hotel.id}, roomId=${room.id})}"
                    class="btn btn-primary btn-sm">Book</a>
             </td>
         </tr>
