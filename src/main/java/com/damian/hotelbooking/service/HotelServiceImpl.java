@@ -88,8 +88,6 @@ public class HotelServiceImpl implements HotelService {
         hotelRepository.save(hotel);
     }
 
-
-
     @Override
     public List<HotelDto> listHotels() {
         return hotelRepository.findAll()
@@ -103,9 +101,7 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new HotelNotFoundException(hotelId.toString()));
 
-        HotelDto dto = toHotelDto(hotel);
-
-        return dto;
+        return toHotelDto(hotel);
     }
 
     @Override
@@ -138,12 +134,23 @@ public class HotelServiceImpl implements HotelService {
                 .toList();
     }
 
+    @Override
+    public void checkOwnership(Long hotelId, Principal principal) {
+        HotelDto hotelDto = findById(hotelId);
+        System.out.println("REQUIRED:" + hotelDto.getId());
+        System.out.println("PROVIDED:" + hotelId);
+        System.out.println("REQUIRED OWNER ID:" + hotelDto.getOwnerId());
+        if (!hotelDto.getOwnerId().equals(userService.findIdByUsername(principal.getName()))) {
+            throw new AccessDeniedException("You are not the owner of this hotel");
+        }
+    }
+
     // Mappere HotelDto <-> Hotel
 
     @Override
     public HotelDto toHotelDto(Hotel hotel) {
         HotelDto hotelDto = new HotelDto();
-        hotelDto.setOwnerId(hotel.getId());
+        hotelDto.setOwnerId(hotel.getOwner().getId());
         hotelDto.setId(hotel.getId());
         hotelDto.setName(hotel.getName());
         hotelDto.setCountry(hotel.getCountry());

@@ -23,4 +23,5 @@ public interface HotelService {
 
     List<HotelDto> findAllByOwnerId(Principal principal);
 
+    void checkOwnership(Long hotelId, Principal principal);
 }

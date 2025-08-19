@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,26 +24,30 @@ public class RoomServiceImpl implements RoomService {
     private final AmenityRepository amenityRepository;
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
+    private final HotelService hotelService;
 
     public RoomServiceImpl(AmenityRepository amenityRepository,
                            RoomRepository roomRepository,
-                           HotelRepository hotelRepository) {
+                           HotelRepository hotelRepository,
+                           HotelService hotelService) {
         this.amenityRepository = amenityRepository;
         this.roomRepository = roomRepository;
         this.hotelRepository = hotelRepository;
+        this.hotelService = hotelService;
     }
 
     @Override
     @Transactional
-    public void addRoom(RoomDto roomDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            System.out.println("Room errors: " + bindingResult.getAllErrors());
-            return;
-        }
+    public void addRoom(Long hotelId, RoomDto roomDto, BindingResult bindingResult, Principal principal) {
+        if (bindingResult.hasErrors()) return;
+
+        roomDto.setHotelId(hotelId);
+
+        hotelService.checkOwnership(hotelId, principal);
 
         Room room = new Room();
-        Hotel hotel = hotelRepository.findById(roomDto.getHotelId())
-                .orElseThrow(() -> new HotelNotFoundException(roomDto.getHotelId().toString()));
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException(hotelId.toString()));
         room.setHotel(hotel);
 
         room.setDescription(roomDto.getDescription());
@@ -65,6 +70,7 @@ public class RoomServiceImpl implements RoomService {
 
         roomRepository.save(room);
     }
+
 
     @Override
     public Room findById(Long roomId) {
