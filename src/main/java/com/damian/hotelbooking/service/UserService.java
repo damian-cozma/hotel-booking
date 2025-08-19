@@ -36,4 +36,6 @@ public interface UserService {
     void assignHotelOwner(Principal principal);
 
     void deleteById(Long userId);
+
+    Long findIdByUsername(String name);
 }

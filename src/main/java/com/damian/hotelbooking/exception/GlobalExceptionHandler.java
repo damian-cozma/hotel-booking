@@ -2,6 +2,7 @@ package com.damian.hotelbooking.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +25,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HotelNotFoundException.class)
     public String handleHotelNotFoundException(HotelNotFoundException ex, Model model) {
         model.addAttribute("errorMessage", "Hotel not found: ID " + ex.getMessage());
+        return "error/custom-error";
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public String handleAccessDeniedException(AccessDeniedException ex, Model model) {
+        model.addAttribute("errorMessage", "Access Denied: " + ex.getMessage());
         return "error/custom-error";
     }
 

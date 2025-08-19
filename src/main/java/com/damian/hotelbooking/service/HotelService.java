@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface HotelService {
 
-    void addHotel(HotelDto hotelDto, BindingResult bindingResult, Principal principal);
+    void saveHotel(HotelDto hotelDto, BindingResult bindingResult, Principal principal);
 
     List<HotelDto> listHotels();
 
@@ -22,4 +22,5 @@ public interface HotelService {
     Hotel toHotel(HotelDto hotelDto);
 
     List<HotelDto> findAllByOwnerId(Principal principal);
+
 }

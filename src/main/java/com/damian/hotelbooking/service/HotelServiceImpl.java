@@ -9,7 +9,7 @@ import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.repository.AmenityRepository;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.UserRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
@@ -36,23 +36,29 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public void addHotel(HotelDto hotelDto, BindingResult bindingResult, Principal principal) {
-
-        if (principal != null) {
-            Long ownerId = userRepository.findByUsername(principal.getName())
-                    .orElseThrow(() -> new UserNotFoundException(principal.getName()))
-                    .getId();
-            hotelDto.setOwnerId(ownerId);
-        }
+    public void saveHotel(HotelDto hotelDto, BindingResult bindingResult, Principal principal) {
 
         if (bindingResult.hasErrors()) {
             return;
+        }
+
+        Long currentUserId = null;
+        if (principal != null) {
+            currentUserId = userRepository.findByUsername(principal.getName())
+                    .orElseThrow(() -> new UserNotFoundException(principal.getName()))
+                    .getId();
+            hotelDto.setOwnerId(currentUserId);
         }
 
         Hotel hotel;
         if (hotelDto.getId() != null) {
             hotel = hotelRepository.findById(hotelDto.getId())
                     .orElseThrow(() -> new HotelNotFoundException(hotelDto.getId().toString()));
+
+            if (!hotel.getOwner().getId().equals(currentUserId)) {
+                throw new AccessDeniedException("You are not the owner of this hotel");
+            }
+
         } else {
             hotel = new Hotel();
             hotel.setRating(0.0);
@@ -69,12 +75,9 @@ public class HotelServiceImpl implements HotelService {
         hotel.setOwner(userService.findById(hotelDto.getOwnerId()));
 
         Set<String> amenities = hotelDto.getAmenities();
-        if (amenities == null) {
-            amenities = Collections.emptySet();
-        }
+        if (amenities == null) amenities = Collections.emptySet();
 
-        Set<Amenity> amenitySet = amenities
-                .stream()
+        Set<Amenity> amenitySet = amenities.stream()
                 .filter(name -> !name.trim().isEmpty())
                 .map(name -> amenityRepository.findByName(name).orElse(null))
                 .filter(Objects::nonNull)
@@ -84,6 +87,7 @@ public class HotelServiceImpl implements HotelService {
 
         hotelRepository.save(hotel);
     }
+
 
 
     @Override
@@ -139,6 +143,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public HotelDto toHotelDto(Hotel hotel) {
         HotelDto hotelDto = new HotelDto();
+        hotelDto.setOwnerId(hotel.getId());
         hotelDto.setId(hotel.getId());
         hotelDto.setName(hotel.getName());
         hotelDto.setCountry(hotel.getCountry());

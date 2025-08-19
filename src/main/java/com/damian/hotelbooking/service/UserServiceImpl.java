@@ -200,6 +200,12 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
+    @Override
+    public Long findIdByUsername(String name) {
+        User user = findByUsername(name);
+        return user.getId();
+    }
+
     // Helper methods
 
     @Override
