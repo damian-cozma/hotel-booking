@@ -4,6 +4,8 @@ import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.entity.Amenity;
 import com.damian.hotelbooking.entity.Hotel;
 import com.damian.hotelbooking.entity.Room;
+import com.damian.hotelbooking.exception.HotelNotFoundException;
+import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.repository.AmenityRepository;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.UserRepository;
@@ -38,7 +40,7 @@ public class HotelServiceImpl implements HotelService {
 
         if (principal != null) {
             Long ownerId = userRepository.findByUsername(principal.getName())
-                    .orElseThrow(() -> new RuntimeException("User not found"))
+                    .orElseThrow(() -> new UserNotFoundException(principal.getName()))
                     .getId();
             hotelDto.setOwnerId(ownerId);
         }
@@ -50,7 +52,7 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel;
         if (hotelDto.getId() != null) {
             hotel = hotelRepository.findById(hotelDto.getId())
-                    .orElseThrow(() -> new RuntimeException("Hotel not found"));
+                    .orElseThrow(() -> new HotelNotFoundException(hotelDto.getId().toString()));
         } else {
             hotel = new Hotel();
             hotel.setRating(0.0);
@@ -95,7 +97,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public HotelDto findById(Long hotelId) {
         Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new UsernameNotFoundException("Hotel not found"));
+                .orElseThrow(() -> new HotelNotFoundException(hotelId.toString()));
 
         HotelDto dto = toHotelDto(hotel);
 
@@ -123,7 +125,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public List<HotelDto> findAllByOwnerId(Principal principal) {
         Long ownerId = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new RuntimeException("Not found"))
+                .orElseThrow(() -> new UserNotFoundException(principal.getName()))
                 .getId();
 
         List<Hotel> hotels = hotelRepository.findAllByOwnerId(ownerId);

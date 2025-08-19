@@ -5,6 +5,8 @@ import com.damian.hotelbooking.entity.Booking;
 import com.damian.hotelbooking.entity.BookingStatus;
 import com.damian.hotelbooking.entity.Room;
 import com.damian.hotelbooking.entity.User;
+import com.damian.hotelbooking.exception.RoomNotFoundException;
+import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.repository.BookingRepository;
 import com.damian.hotelbooking.repository.RoomRepository;
 import com.damian.hotelbooking.repository.UserRepository;
@@ -28,9 +30,9 @@ public class BookingServiceImpl implements BookingService {
     public void createBooking(BookingDto bookingDto, BindingResult bindingResult) {
 
         User user = userRepository.findById(bookingDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(bookingDto.getUserId().toString()));
         Room room = roomRepository.findById(bookingDto.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new RoomNotFoundException(bookingDto.getRoomId().toString()));
 
         long nights = java.time.temporal.ChronoUnit.DAYS.between(
                 bookingDto.getCheckInDate(), bookingDto.getCheckOutDate());

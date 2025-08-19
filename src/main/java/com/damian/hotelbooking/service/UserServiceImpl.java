@@ -3,6 +3,7 @@ package com.damian.hotelbooking.service;
 import com.damian.hotelbooking.dto.ProfileDto;
 import com.damian.hotelbooking.dto.SignupDto;
 import com.damian.hotelbooking.entity.User;
+import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.repository.UserRepository;
 import com.damian.hotelbooking.entity.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
                             BindingResult bindingResult, Model model) {
 
         User user = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + principal.getName()));
+                .orElseThrow(() -> new UserNotFoundException(principal.getName()));
 
         if (!user.getPhoneNumber().equals(profileDto.getPhoneNumber()) &&
                 userRepository.existsByPhoneNumber(profileDto.getPhoneNumber())) {
@@ -132,7 +133,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found - " + principal.getName()));
+                .orElseThrow(() -> new UserNotFoundException(principal.getName()));
 
         if (!newPassword.equals(confirmPassword)) {
             bindingResult.rejectValue("confirmPassword", "error.passwordDto", "New passwords don't match");
@@ -204,7 +205,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String name) {
         return userRepository.findByUsername(name).orElseThrow(() ->
-                new UsernameNotFoundException("User not found: " + name));
+                new UserNotFoundException(name));
     }
 
     @Override
@@ -215,7 +216,7 @@ public class UserServiceImpl implements UserService {
         if (result.isPresent()) {
             user = result.get();
         } else {
-            throw new RuntimeException("Did not find user id - " + theId);
+            throw new UserNotFoundException(theId.toString());
         }
 
         return user;

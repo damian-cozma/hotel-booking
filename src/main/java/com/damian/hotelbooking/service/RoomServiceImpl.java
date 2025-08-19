@@ -5,6 +5,8 @@ import com.damian.hotelbooking.dto.RoomDto;
 import com.damian.hotelbooking.entity.Amenity;
 import com.damian.hotelbooking.entity.Hotel;
 import com.damian.hotelbooking.entity.Room;
+import com.damian.hotelbooking.exception.HotelNotFoundException;
+import com.damian.hotelbooking.exception.RoomNotFoundException;
 import com.damian.hotelbooking.repository.AmenityRepository;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.RoomRepository;
@@ -40,7 +42,7 @@ public class RoomServiceImpl implements RoomService {
 
         Room room = new Room();
         Hotel hotel = hotelRepository.findById(roomDto.getHotelId())
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+                .orElseThrow(() -> new HotelNotFoundException(roomDto.getHotelId().toString()));
         room.setHotel(hotel);
 
         room.setDescription(roomDto.getDescription());
@@ -68,7 +70,7 @@ public class RoomServiceImpl implements RoomService {
     public Room findById(Long roomId) {
 
         return roomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new RoomNotFoundException(roomId.toString()));
 
     }
 

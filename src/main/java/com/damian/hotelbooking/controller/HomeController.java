@@ -2,6 +2,8 @@ package com.damian.hotelbooking.controller;
 
 import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.entity.User;
+import com.damian.hotelbooking.exception.RoomNotFoundException;
+import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.service.HotelService;
 import com.damian.hotelbooking.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -16,13 +18,9 @@ import java.util.List;
 public class HomeController {
 
     private final UserService userService;
-    private final HotelService hotelService;
 
-    public HomeController(UserService userService, HotelService hotelService) {
-
+    public HomeController(UserService userService) {
         this.userService = userService;
-        this.hotelService = hotelService;
-
     }
 
     @GetMapping("/")
