@@ -32,6 +32,8 @@ import static com.damian.hotelbooking.entity.UserRole.ROLE_HOTEL_ADMIN;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -188,7 +190,8 @@ public class UserServiceImpl implements UserService {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername()); // ia user's info
         UsernamePasswordAuthenticationToken newAuth =
-                new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()); // logheaza utilizatorul w the updated info (role)
+                new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(),
+                        userDetails.getAuthorities()); // logheaza utilizatorul w the updated info (role)
         SecurityContextHolder.getContext().setAuthentication(newAuth); // refresh sesiune/auth propriu zis
 
     }
@@ -216,7 +219,7 @@ public class UserServiceImpl implements UserService {
     public User findById(Long theId) {
         Optional<User> result = userRepository.findById(theId);
 
-        User user = null;
+        User user;
         if (result.isPresent()) {
             user = result.get();
         } else {

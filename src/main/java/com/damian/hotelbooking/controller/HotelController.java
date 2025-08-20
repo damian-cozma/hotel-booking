@@ -24,21 +24,11 @@ public class HotelController {
 
     private final HotelService hotelService;
     private final AmenityService amenityService;
-    private final UserService userService;
-    private final BookingService bookingService;
-    private final RoomService roomService;
-    private final BookingRepository bookingRepository;
 
     public HotelController(HotelService hotelService,
-                           AmenityService amenityService,
-                           UserService userService,
-                           BookingService bookingService, RoomService roomService, BookingRepository bookingRepository) {
+                           AmenityService amenityService) {
         this.hotelService = hotelService;
         this.amenityService = amenityService;
-        this.userService = userService;
-        this.bookingService = bookingService;
-        this.roomService = roomService;
-        this.bookingRepository = bookingRepository;
     }
 
     @GetMapping("/list")
@@ -74,52 +64,4 @@ public class HotelController {
 
     }
 
-    @GetMapping("/{hotelId}/rooms/{roomId}/book")
-    public String showCreateBookingForm(@PathVariable Long hotelId,
-                                  @PathVariable Long roomId,
-                                  Principal principal,
-                                  Model model) {
-
-        model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
-        model.addAttribute("hotelId", hotelId);
-        model.addAttribute("roomId", roomId);
-
-        Room room = roomService.findById(roomId);
-        model.addAttribute("roomPrice", room.getPrice());
-        model.addAttribute("room", room);
-
-        BookingDto bookingDto = new BookingDto();
-        bookingDto.setUserId(userService.findByUsername(principal.getName()).getId());
-
-        bookingDto.setRoomId(roomId);
-        List<LocalDate[]> unavailableDates = roomService.getUnavailableDateRanges(roomId);
-        model.addAttribute("unavailableDates", unavailableDates);
-
-        model.addAttribute("booking", bookingDto);
-
-        return "common/hotels/book";
-
-    }
-
-    @PostMapping("/{hotelId}/rooms/{roomId}/book")
-    public String createBooking(@PathVariable Long hotelId,
-                          @PathVariable Long roomId,
-                          @ModelAttribute("booking") BookingDto bookingDto,
-                          BindingResult bindingResult,
-                          Principal principal,
-                          Model model) {
-
-        bookingService.createBooking(bookingDto, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
-            model.addAttribute("hotelId", hotelId);
-            model.addAttribute("roomId", roomId);
-            Room room = roomService.findById(roomId);
-            model.addAttribute("roomPrice", room.getPrice());
-            return "common/hotels/book";
-        }
-
-        return "redirect:/hotels/" + hotelId;
-    }
 }

@@ -18,12 +18,4 @@ public class HotelbookingApplication {
 		SpringApplication.run(HotelbookingApplication.class, args);
 	}
 
-//	@Bean
-//	public CommandLineRunner commandLineRunner(UserRepository userRepository) {
-//		return args -> {
-//			User user = userRepository.findByUsername("Alexu")
-//					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
-//		};
-//	}
-
 }
