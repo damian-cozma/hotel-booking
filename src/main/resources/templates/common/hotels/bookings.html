@@ -21,7 +21,8 @@
         <table class="table table-bordered table-hover">
             <thead class="table-light">
             <tr>
-                <th>Room</th>
+                <th>Hotel</th>
+                <th>Type</th>
                 <th>Check-in</th>
                 <th>Check-out</th>
                 <th>Guests</th>
@@ -32,17 +33,23 @@
             </thead>
             <tbody>
             <tr th:each="booking : ${bookings}">
-                <td th:text="${booking.room.id}"></td>
+                <td th:text="${booking.room.hotel.name}"></td>
+                <td th:text="${booking.room.type}"></td>
                 <td th:text="${booking.checkInDate}"></td>
                 <td th:text="${booking.checkOutDate}"></td>
                 <td th:text="${booking.numberOfGuests}"></td>
                 <td th:text="${booking.totalPrice}"></td>
                 <td th:text="${booking.status}"></td>
                 <td>
-                    <form th:action="@{/bookings/{id}/cancel(id=${booking.id})}" method="post" style="display:inline;">
-                        <input type="hidden" name="_method" value="delete"/>
-                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                    </form>
+                    <div class="d-flex justify-content-start">
+                        <a th:href="@{/bookings/{id}(id=${booking.id})}" class="btn btn-info btn-sm">View</a>
+                        <div th:if="${#strings.trim(booking.status).toUpperCase() == 'CHECKED_IN'}" class="ms-2">
+                            <form th:action="@{/bookings/{id}/cancel(id=${booking.id})}" method="post" style="display:inline;">
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
                 </td>
             </tr>
             </tbody>

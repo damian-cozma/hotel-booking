@@ -63,17 +63,15 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script th:inline="javascript">
-    /*<![CDATA[*/
     const roomPrice = [[${roomPrice}]];
     const estimatedPriceInput = document.getElementById('estimatedPrice');
-    const unavailableDates = /*[[${unavailableDates}]]*/ [];
+    const unavailableDates = [];
 
     const disabledRanges = unavailableDates.map(range => ({
         from: range[0],
         to: range[1]
     }));
 
-    // JavaScript
     function getNextUnavailableDate(checkInDate) {
         for (const range of disabledRanges) {
             const rangeStart = new Date(range.from);
@@ -93,11 +91,10 @@
                 const minCheckOut = new Date(selectedDates[0]);
                 minCheckOut.setDate(minCheckOut.getDate() + 1);
 
-                // Find the next unavailable date after check-in
                 const nextUnavailable = getNextUnavailableDate(selectedDates[0]);
                 let maxCheckOut = nextUnavailable ? new Date(nextUnavailable) : null;
                 if (maxCheckOut) {
-                    maxCheckOut.setDate(maxCheckOut.getDate()); // Don't allow overlap
+                    maxCheckOut.setDate(maxCheckOut.getDate());
                 }
 
                 checkOutPicker.set("minDate", minCheckOut);
@@ -130,7 +127,6 @@
         }
         estimatedPriceInput.value = '';
     }
-    /*]]>*/
 </script>
 </body>
 </html>
