@@ -106,8 +106,8 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public List<HotelDto> searchHotels(String country, String city, List<String> amenities, LocalDate checkInDate,
-                                       LocalDate checkOutDate) {
+    public List<HotelDto> searchHotels(String country, String city, List<String> amenities, int capacity,
+                                       String roomType) {
         return hotelRepository.findAll()
                 .stream()
                 .filter(hotel -> country == null || country.isBlank() || hotel.getCountry().equalsIgnoreCase(country))
@@ -120,6 +120,16 @@ public class HotelServiceImpl implements HotelService {
                             .collect(Collectors.toSet());
                     return hotelAmenities.containsAll(amenities);
                 })
+                .map(hotel -> {
+                    Set<Room> filteredRooms = hotel.getRooms().stream()
+                            .filter(room -> room.getCapacity() > capacity)
+                            .filter(room -> roomType == null || roomType.isBlank() ||
+                                    room.getType().name().equalsIgnoreCase(roomType))
+                            .collect(Collectors.toSet());
+                    hotel.setRooms(filteredRooms);
+                    return hotel;
+                })
+                .filter(hotel -> !hotel.getRooms().isEmpty())
                 .map(this::toHotelDto)
                 .collect(Collectors.toList());
     }
@@ -139,7 +149,6 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public void checkOwnership(Long hotelId, Principal principal) {
         HotelDto hotelDto = findById(hotelId);
-
         if (!hotelDto.getOwnerId().equals(userService.findIdByUsername(principal.getName()))) {
             throw new AccessDeniedException("You are not the owner of this hotel");
         }

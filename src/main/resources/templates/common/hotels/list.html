@@ -24,6 +24,21 @@
                 <input type="text" name="city" class="form-control" placeholder="City" th:value="${param.city}">
             </div>
 
+            <div class="col-md-3">
+                <input type="number" name="capacity" class="form-control" placeholder="Minimum Capacity"
+                       th:value="${param.capacity}">
+            </div>
+
+            <div class="col-md-3">
+                <select name="roomType" class="form-select">
+                    <option value="" selected>Any Room Type</option>
+                    <option th:each="type : ${T(com.damian.hotelbooking.entity.RoomType).values()}"
+                            th:value="${type.name()}"
+                            th:text="${type.name()}">
+                    </option>
+                </select>
+            </div>
+
             <div class="col-md-6 position-relative">
                 <button type="button" class="btn btn-outline-secondary w-100" id="amenitiesBtn">
                     Select Amenities

@@ -65,11 +65,13 @@ public class HotelController {
             @RequestParam(value = "country", required = false) String country,
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "amenities", required = false) List<String> amenities,
-            @RequestParam(value = "check_in_date", required = true) LocalDate checkInDate,
-            @RequestParam(value = "check_out_date", required = true) LocalDate checkOutDate,
+            @RequestParam(value = "capacity", defaultValue = "0") int capacity,
+            @RequestParam(value = "roomType", required = false) String roomType,
+            @RequestParam(value = "checkInDate", required = true) LocalDate checkInDate,
+            @RequestParam(value = "checkOutDate", required = true) LocalDate checkOutDate,
             Model model) {
 
-        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities, checkInDate,checkOutDate));
+        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities, capacity, roomType));
         model.addAttribute("allAmenities", amenityService.findAllAmenities());
 
         return "common/hotels/list";
