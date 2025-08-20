@@ -18,7 +18,7 @@
 
     <div class="mb-3">
         <a th:href="@{'/owner/hotels/' + ${hotel.id} + '/rooms/add'}" class="btn btn-primary">Adaugă Cameră Nouă</a>
-        <a th:href="@{/owner/hotels/list}" class="btn btn-secondary">Înapoi la Hoteluri</a>
+        <a th:href="@{/owner/hotels/list}" class="btn btn-secondary">Back to hotels</a>
     </div>
 
     <table class="table table-striped">
@@ -27,16 +27,14 @@
             <th>Type</th>
             <th>Capacity</th>
             <th>Price Per Night</th>
-            <th>Availability</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="room : ${rooms}">
-            <td th:text="${room.type}">Tip</td>
-            <td th:text="${room.capacity}">Capacitate</td>
-            <td th:text="${room.price}">Preț</td>
-            <td th:text="${room.available} ? 'Da' : 'Nu'">Disponibil</td>
+            <td th:text="${room.type}"></td>
+            <td th:text="${room.capacity}"></td>
+            <td th:text="${room.price}"></td>
             <td>
                 <a th:href="@{'/owner/hotels/' + ${hotel.id} + '/rooms/edit/' + ${room.id}}"
                    class="btn btn-sm btn-warning">Edit</a>
@@ -49,7 +47,7 @@
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(rooms)}">
-            <td colspan="5" class="text-center">Nu există camere adăugate încă.</td>
+            <td colspan="5" class="text-center">There aren't any listed rooms yet.</td>
         </tr>
         </tbody>
     </table>

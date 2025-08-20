@@ -5,6 +5,7 @@ import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.entity.Booking;
 import com.damian.hotelbooking.entity.Room;
 import com.damian.hotelbooking.entity.User;
+import com.damian.hotelbooking.exception.BookingNotFoundException;
 import com.damian.hotelbooking.repository.BookingRepository;
 import com.damian.hotelbooking.repository.RoomRepository;
 import com.damian.hotelbooking.service.*;
@@ -24,11 +25,20 @@ public class HotelController {
 
     private final HotelService hotelService;
     private final AmenityService amenityService;
+    private final UserService userService;
+    private final RoomService roomService;
+    private final BookingService bookingService;
 
     public HotelController(HotelService hotelService,
-                           AmenityService amenityService) {
+                           AmenityService amenityService,
+                           UserService userService,
+                           RoomService roomService,
+                           BookingService bookingService) {
         this.hotelService = hotelService;
         this.amenityService = amenityService;
+        this.userService = userService;
+        this.roomService = roomService;
+        this.bookingService = bookingService;
     }
 
     @GetMapping("/list")
@@ -55,13 +65,61 @@ public class HotelController {
             @RequestParam(value = "country", required = false) String country,
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "amenities", required = false) List<String> amenities,
+            @RequestParam(value = "check_in_date", required = true) LocalDate checkInDate,
+            @RequestParam(value = "check_out_date", required = true) LocalDate checkOutDate,
             Model model) {
 
-        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities));
+        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities, checkInDate,checkOutDate));
         model.addAttribute("allAmenities", amenityService.findAllAmenities());
 
         return "common/hotels/list";
 
+    }
+
+    @GetMapping("/{hotelId}/rooms/{roomId}/book")
+    public String showCreateBookingForm(@PathVariable Long hotelId,
+                                        @PathVariable Long roomId,
+                                        Principal principal,
+                                        Model model) {
+
+        model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
+        model.addAttribute("hotelId", hotelId);
+        model.addAttribute("roomId", roomId);
+
+        Room room = roomService.findById(roomId);
+        model.addAttribute("roomPrice", room.getPrice());
+        model.addAttribute("room", room);
+
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setUserId(userService.findByUsername(principal.getName()).getId());
+        bookingDto.setRoomId(roomId);
+
+        model.addAttribute("booking", bookingDto);
+
+        return "common/hotels/book";
+    }
+
+    @PostMapping("/{hotelId}/rooms/{roomId}/book")
+    public String createBooking(@PathVariable Long hotelId,
+                                @PathVariable Long roomId,
+                                @ModelAttribute("booking") BookingDto bookingDto,
+                                BindingResult bindingResult,
+                                Principal principal,
+                                Model model) {
+
+        bookingService.createBooking(bookingDto, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
+            model.addAttribute("hotelId", hotelId);
+            model.addAttribute("roomId", roomId);
+            Room room = roomService.findById(roomId);
+            model.addAttribute("roomPrice", room.getPrice());
+            model.addAttribute("room", room);
+            return "common/hotels/book";
+        }
+
+        return "redirect:/hotels/" + hotelId;
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -105,7 +106,8 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public List<HotelDto> searchHotels(String country, String city, List<String> amenities) {
+    public List<HotelDto> searchHotels(String country, String city, List<String> amenities, LocalDate checkInDate,
+                                       LocalDate checkOutDate) {
         return hotelRepository.findAll()
                 .stream()
                 .filter(hotel -> country == null || country.isBlank() || hotel.getCountry().equalsIgnoreCase(country))
@@ -137,9 +139,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public void checkOwnership(Long hotelId, Principal principal) {
         HotelDto hotelDto = findById(hotelId);
-        System.out.println("REQUIRED:" + hotelDto.getId());
-        System.out.println("PROVIDED:" + hotelId);
-        System.out.println("REQUIRED OWNER ID:" + hotelDto.getOwnerId());
+
         if (!hotelDto.getOwnerId().equals(userService.findIdByUsername(principal.getName()))) {
             throw new AccessDeniedException("You are not the owner of this hotel");
         }

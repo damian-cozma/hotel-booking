@@ -5,6 +5,7 @@ import com.damian.hotelbooking.entity.Hotel;
 import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface HotelService {
@@ -15,7 +16,8 @@ public interface HotelService {
 
     HotelDto findById(Long hotelId);
 
-    List<HotelDto> searchHotels(String country, String city, List<String> amenities);
+    List<HotelDto> searchHotels(String country, String city, List<String> amenities, LocalDate checkInDate,
+                                LocalDate checkOutDate);
 
     HotelDto toHotelDto(Hotel hotel);
 
