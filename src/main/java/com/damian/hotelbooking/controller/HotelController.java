@@ -4,6 +4,8 @@ import com.damian.hotelbooking.dto.BookingDto;
 import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.entity.Booking;
 import com.damian.hotelbooking.entity.Room;
+import com.damian.hotelbooking.entity.User;
+import com.damian.hotelbooking.repository.BookingRepository;
 import com.damian.hotelbooking.repository.RoomRepository;
 import com.damian.hotelbooking.service.*;
 import org.h2.engine.Mode;
@@ -25,16 +27,18 @@ public class HotelController {
     private final UserService userService;
     private final BookingService bookingService;
     private final RoomService roomService;
+    private final BookingRepository bookingRepository;
 
     public HotelController(HotelService hotelService,
                            AmenityService amenityService,
                            UserService userService,
-                           BookingService bookingService, RoomService roomService) {
+                           BookingService bookingService, RoomService roomService, BookingRepository bookingRepository) {
         this.hotelService = hotelService;
         this.amenityService = amenityService;
         this.userService = userService;
         this.bookingService = bookingService;
         this.roomService = roomService;
+        this.bookingRepository = bookingRepository;
     }
 
     @GetMapping("/list")
@@ -71,7 +75,7 @@ public class HotelController {
     }
 
     @GetMapping("/{hotelId}/rooms/{roomId}/book")
-    public String showBookingForm(@PathVariable Long hotelId,
+    public String showCreateBookingForm(@PathVariable Long hotelId,
                                   @PathVariable Long roomId,
                                   Principal principal,
                                   Model model) {
@@ -82,6 +86,7 @@ public class HotelController {
 
         Room room = roomService.findById(roomId);
         model.addAttribute("roomPrice", room.getPrice());
+        model.addAttribute("room", room);
 
         BookingDto bookingDto = new BookingDto();
         bookingDto.setUserId(userService.findByUsername(principal.getName()).getId());
@@ -97,21 +102,12 @@ public class HotelController {
     }
 
     @PostMapping("/{hotelId}/rooms/{roomId}/book")
-    public String booking(@PathVariable Long hotelId,
+    public String createBooking(@PathVariable Long hotelId,
                           @PathVariable Long roomId,
                           @ModelAttribute("booking") BookingDto bookingDto,
                           BindingResult bindingResult,
                           Principal principal,
                           Model model) {
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
-            model.addAttribute("hotelId", hotelId);
-            model.addAttribute("roomId", roomId);
-            Room room = roomService.findById(roomId);
-            model.addAttribute("roomPrice", room.getPrice());
-            return "common/hotels/book";
-        }
 
         bookingService.createBooking(bookingDto, bindingResult);
 

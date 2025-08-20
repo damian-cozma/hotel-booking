@@ -49,7 +49,7 @@
                     </ul>
 
                     <div class="mt-auto d-flex justify-content-between align-items-center">
-                        <h4 class="text-primary mb-0" th:text="'From $' + ${hotel.pricePerNight} + '/night'"></h4>
+                        <h4 class="text-primary mb-0" th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'No listings available'"></h4>
                         <div class="d-flex gap-2">
                             <a th:href="@{/owner/hotels/{hotelId}/rooms/add(hotelId=${hotel.id})}"
                                class="btn btn-outline-warning btn-lg"
@@ -84,7 +84,8 @@
                     View
                 </button>
                 <a th:href="@{/hotels/{hotelId}/rooms/{roomId}/book(hotelId=${hotel.id}, roomId=${room.id})}"
-                   class="btn btn-primary btn-sm">Book</a>
+                   class="btn btn-primary btn-sm">Book
+                </a>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(rooms)}">

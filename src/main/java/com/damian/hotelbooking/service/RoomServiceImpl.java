@@ -2,10 +2,7 @@ package com.damian.hotelbooking.service;
 
 import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.dto.RoomDto;
-import com.damian.hotelbooking.entity.Amenity;
-import com.damian.hotelbooking.entity.Booking;
-import com.damian.hotelbooking.entity.Hotel;
-import com.damian.hotelbooking.entity.Room;
+import com.damian.hotelbooking.entity.*;
 import com.damian.hotelbooking.exception.HotelNotFoundException;
 import com.damian.hotelbooking.exception.RoomNotFoundException;
 import com.damian.hotelbooking.repository.AmenityRepository;
@@ -80,6 +77,7 @@ public class RoomServiceImpl implements RoomService {
     public List<LocalDate[]> getUnavailableDateRanges(Long roomId) {
         List<Booking> bookings = bookingRepository.findByRoomId(roomId);
         return bookings.stream()
+                .filter(b -> b.getStatus() != BookingStatus.CANCELLED)
                 .map(b -> new LocalDate[]{b.getCheckInDate(), b.getCheckOutDate()})
                 .toList();
     }

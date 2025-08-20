@@ -36,6 +36,8 @@ public class BookingServiceImpl implements BookingService {
         Room room = roomRepository.findById(bookingDto.getRoomId())
                 .orElseThrow(() -> new RoomNotFoundException(bookingDto.getRoomId().toString()));
 
+        Long ownerId = room.getHotel().getOwner().getId();
+
         long nights = java.time.temporal.ChronoUnit.DAYS.between(bookingDto.getCheckInDate(),
                 bookingDto.getCheckOutDate());
 
@@ -43,22 +45,21 @@ public class BookingServiceImpl implements BookingService {
             bindingResult.rejectValue("checkOutDate", "booking.tooLong", "Cannot book for more than 30 days.");
         }
 
-        // Can't check in after check out (UI required)
+        if (bookingDto.getUserId().equals(ownerId)) {
+            bindingResult.reject("owner.booking", "Owners can't book their own listings.");
+        }
+
         if (bookingDto.getCheckInDate().isAfter(bookingDto.getCheckOutDate())) {
             bindingResult.rejectValue("checkOutDate", "booking.illegalCheckInOut", "Cannot check in after check out.");
         }
 
-        // Can't check in the same day as out (UI required)
         if (bookingDto.getCheckInDate().isEqual(bookingDto.getCheckOutDate())) {
             bindingResult.rejectValue("checkOutDate", "booking.oneNight", "Must book at least one night.");
         }
 
-        // Must respect number of guests
         if (bookingDto.getNumberOfGuests() > room.getCapacity()) {
             bindingResult.rejectValue("numberOfGuests", "booking.capacity", "Capacity reached.");
         }
-
-        // Can't book ur own listing but idk
 
         List<Booking> existingBookings = bookingRepository.findByRoomId(room.getId());
         boolean overlaps = existingBookings.stream().anyMatch(b ->
@@ -80,11 +81,20 @@ public class BookingServiceImpl implements BookingService {
         booking.setCheckInDate(bookingDto.getCheckInDate());
         booking.setCheckOutDate(bookingDto.getCheckOutDate());
         booking.setNumberOfGuests(bookingDto.getNumberOfGuests());
-        booking.setStatus(BookingStatus.CONFIRMED);
-        room.setAvailable(false);
+        booking.setStatus(BookingStatus.CHECKED_IN);
         booking.setTotalPrice(totalPrice);
 
         bookingRepository.save(booking);
 
+    }
+
+    @Override
+    public void cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(
+                () -> new RoomNotFoundException(bookingId.toString())
+        );
+
+        booking.setStatus(BookingStatus.CANCELLED);
+        bookingRepository.save(booking);
     }
 }

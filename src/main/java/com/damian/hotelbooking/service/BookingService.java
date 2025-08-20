@@ -5,4 +5,6 @@ import org.springframework.validation.BindingResult;
 
 public interface BookingService {
     void createBooking(BookingDto bookingDto, BindingResult bindingResult);
+
+    void cancelBooking(Long bookingId);
 }

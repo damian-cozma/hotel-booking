@@ -89,7 +89,7 @@
                             <span th:text="${hotel.amenities.size() - 3}"></span> more</span>
                     </div>
 
-                    <td th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'Fully booked'"></td>
+                    <td th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'No listings available'"></td>
 
 
                     <div class="mt-auto text-end">

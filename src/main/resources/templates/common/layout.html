@@ -48,7 +48,8 @@
                     </button>
 
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="/account">My Profile</a></li>
+                        <li><a class="dropdown-item" href="/account">Profile</a></li>
+                        <li><a class="dropdown-item" href="/bookings">Bookings</a></li>
 
                         <li sec:authorize="hasRole('PLATFORM_ADMIN')">
                             <a class="dropdown-item" href="/users">Admin Dashboard</a>
@@ -56,7 +57,7 @@
 
                         <li sec:authorize="hasRole('HOTEL_ADMIN')">
                             <a class="dropdown-item btn btn-warning text-dark" th:href="@{/owner/hotels/list}">
-                                My Listings
+                                Listings
                             </a>
                         </li>
 

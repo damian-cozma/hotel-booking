@@ -32,8 +32,6 @@ import static com.damian.hotelbooking.entity.UserRole.ROLE_HOTEL_ADMIN;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
-    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired

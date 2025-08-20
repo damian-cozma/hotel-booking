@@ -39,16 +39,19 @@
 
         <div class="mb-3">
             <label>Number of Guests</label>
-            <input type="number" th:field="*{numberOfGuests}" min="1" max="20" class="form-control"/>
+            <select id="numGuests" name="numberOfGuests" class="form-select" th:field="*{numberOfGuests}">
+                <option th:each="i : ${#numbers.sequence(1, room.capacity)}"
+                        th:value="${i}" th:text="${i}"></option>
+            </select>
             <div th:if="${#fields.hasErrors('numberOfGuests')}" class="text-danger small">
                 <span th:errors="*{numberOfGuests}"></span>
             </div>
         </div>
 
         <div class="mb-3">
-            <label>Estimated Total Price</label>
+            <label>Total Price</label>
             <input type="text" id="estimatedPrice" class="form-control" readonly/>
-            <div class="form-text">Calculated as room price × number of nights</div>
+            <div class="form-text">Calculated as room price x number of nights</div>
         </div>
 
         <button type="submit" class="btn btn-primary">Book Now</button>
@@ -70,16 +73,41 @@
         to: range[1]
     }));
 
-    flatpickr("#checkInDate", {
+    // JavaScript
+    function getNextUnavailableDate(checkInDate) {
+        for (const range of disabledRanges) {
+            const rangeStart = new Date(range.from);
+            if (rangeStart > checkInDate) {
+                return rangeStart;
+            }
+        }
+        return null;
+    }
+
+    const checkInPicker = flatpickr("#checkInDate", {
         dateFormat: "Y-m-d",
         disable: disabledRanges,
         minDate: "today",
         onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length > 0) {
+                const minCheckOut = new Date(selectedDates[0]);
+                minCheckOut.setDate(minCheckOut.getDate() + 1);
+
+                // Find the next unavailable date after check-in
+                const nextUnavailable = getNextUnavailableDate(selectedDates[0]);
+                let maxCheckOut = nextUnavailable ? new Date(nextUnavailable) : null;
+                if (maxCheckOut) {
+                    maxCheckOut.setDate(maxCheckOut.getDate()); // Don't allow overlap
+                }
+
+                checkOutPicker.set("minDate", minCheckOut);
+                checkOutPicker.set("maxDate", maxCheckOut);
+            }
             updateEstimatedPrice();
         }
     });
 
-    flatpickr("#checkOutDate", {
+    const checkOutPicker = flatpickr("#checkOutDate", {
         dateFormat: "Y-m-d",
         disable: disabledRanges,
         minDate: "today",
