@@ -39,20 +39,42 @@
                 </select>
             </div>
 
-            <div class="col-md-6 position-relative">
-                <button type="button" class="btn btn-outline-secondary w-100" id="amenitiesBtn">
-                    Select Amenities
-                </button>
-                <div id="amenitiesPanel" class="border rounded p-2 position-absolute bg-white"
-                     style="display:none; max-height: 200px; overflow-y: auto; z-index:100;">
-                    <div class="form-check" th:each="amenity : ${allAmenities}">
-                        <input class="form-check-input" type="checkbox" name="amenities" th:value="${amenity}"
-                               th:checked="${param.amenities != null and #arrays.contains(param.amenities, amenity)}"
-                               th:id="'amenity_' + ${amenity}">
-                        <label class="form-check-label" th:for="'amenity_' + ${amenity}" th:text="${amenity}">Amenity</label>
-                    </div>
+            <div class="col-md-6">
+                <label class="form-label">Amenities</label>
+                <div class="dropdown w-100">
+                    <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
+                            id="amenitiesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select
+                    </button>
+                    <ul class="dropdown-menu w-100 p-2" aria-labelledby="amenitiesDropdown"
+                        style="max-height: 200px; overflow-y: auto;">
+                        <li th:each="amenity : ${allAmenities}">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="amenities"
+                                       th:value="${amenity}"
+                                       th:checked="${param.amenities != null and #arrays.contains(param.amenities, amenity)}"
+                                       th:id="'amenity_' + ${amenity}">
+                                <label class="form-check-label" th:for="'amenity_' + ${amenity}"
+                                       th:text="${amenity}"></label>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
+
+            <div class="col-md-3">
+                <label for="checkInDate" class="form-label">Check-In</label>
+                <input type="date" id="checkInDate" name="checkInDate" class="form-control"
+                       th:value="${param.checkInDate}">
+            </div>
+
+            <div class="col-md-3">
+                <label for="checkOutDate" class="form-label">Check-Out</label>
+                <input type="date" id="checkOutDate" name="checkOutDate" class="form-control"
+                       th:value="${param.checkOutDate}">
+            </div>
+
 
             <script>
                 const btn = document.getElementById('amenitiesBtn');

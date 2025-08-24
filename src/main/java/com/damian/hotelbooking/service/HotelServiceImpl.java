@@ -9,6 +9,7 @@ import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.repository.AmenityRepository;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.UserRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -107,7 +108,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public List<HotelDto> searchHotels(String country, String city, List<String> amenities, int capacity,
-                                       String roomType) {
+                                       String roomType, LocalDate checkInDate, LocalDate checkOutDate) {
         return hotelRepository.findAll()
                 .stream()
                 .filter(hotel -> country == null || country.isBlank() || hotel.getCountry().equalsIgnoreCase(country))
@@ -122,9 +123,13 @@ public class HotelServiceImpl implements HotelService {
                 })
                 .map(hotel -> {
                     Set<Room> filteredRooms = hotel.getRooms().stream()
-                            .filter(room -> room.getCapacity() > capacity)
+                            .filter(room -> room.getCapacity() >= capacity)
                             .filter(room -> roomType == null || roomType.isBlank() ||
                                     room.getType().name().equalsIgnoreCase(roomType))
+                            .filter(room -> room.getBookings().stream().noneMatch(booking ->
+                                    checkInDate.isBefore(booking.getCheckOutDate()) &&
+                                            checkOutDate.isAfter(booking.getCheckInDate())
+                            ))
                             .collect(Collectors.toSet());
                     hotel.setRooms(filteredRooms);
                     return hotel;
@@ -133,6 +138,7 @@ public class HotelServiceImpl implements HotelService {
                 .map(this::toHotelDto)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public List<HotelDto> findAllByOwnerId(Principal principal) {

@@ -71,7 +71,7 @@ public class HotelController {
             @RequestParam(value = "checkOutDate", required = true) LocalDate checkOutDate,
             Model model) {
 
-        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities, capacity, roomType));
+        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities, capacity, roomType, checkInDate, checkOutDate));
         model.addAttribute("allAmenities", amenityService.findAllAmenities());
 
         return "common/hotels/list";

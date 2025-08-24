@@ -59,6 +59,9 @@ public class Hotel {
     )
     private Set<Amenity> amenities;
 
+    @Column(name = "image_path")
+    private String imagePath;
+
     @Override
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
