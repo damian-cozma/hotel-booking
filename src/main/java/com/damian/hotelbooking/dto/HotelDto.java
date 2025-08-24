@@ -8,7 +8,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -47,6 +49,10 @@ public class HotelDto {
 
     @Size(max = 1000, message = "Description must be at most 1000 characters")
     private String description;
+
+    private List<MultipartFile> images;
+
+    private List<String> imageUrls;
 
     private Long ownerId;
 

@@ -3,6 +3,7 @@ package com.damian.hotelbooking.service;
 import com.damian.hotelbooking.dto.HotelDto;
 import com.damian.hotelbooking.entity.Amenity;
 import com.damian.hotelbooking.entity.Hotel;
+import com.damian.hotelbooking.entity.HotelImage;
 import com.damian.hotelbooking.entity.Room;
 import com.damian.hotelbooking.exception.HotelNotFoundException;
 import com.damian.hotelbooking.exception.UserNotFoundException;
@@ -26,15 +27,17 @@ public class HotelServiceImpl implements HotelService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final AmenityRepository amenityRepository;
+    private final HotelImageService hotelImageService;
 
     public HotelServiceImpl(HotelRepository hotelRepository,
                             UserService userService,
                             UserRepository userRepository,
-                            AmenityRepository amenityRepository) {
+                            AmenityRepository amenityRepository, HotelImageService hotelImageService) {
         this.hotelRepository = hotelRepository;
         this.userService = userService;
         this.userRepository = userRepository;
         this.amenityRepository = amenityRepository;
+        this.hotelImageService = hotelImageService;
     }
 
     @Override
@@ -88,6 +91,11 @@ public class HotelServiceImpl implements HotelService {
         hotel.setAmenities(amenitySet);
 
         hotelRepository.save(hotel);
+
+        if (hotelDto.getImages() != null && !hotelDto.getImages().isEmpty()) {
+            hotelImageService.saveImages(hotelDto.getImages(), hotel);
+        }
+
     }
 
     @Override
@@ -191,6 +199,13 @@ public class HotelServiceImpl implements HotelService {
                             .orElse(null)
             );
         }
+
+        List<String> imageUrls = hotelImageService.getImagesByHotel(hotel.getId())
+                .stream()
+                .map(HotelImage::getUrl)
+                .collect(Collectors.toList());
+        hotelDto.setImageUrls(imageUrls);
+
 
         return hotelDto;
     }

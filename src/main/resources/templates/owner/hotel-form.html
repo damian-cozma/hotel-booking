@@ -21,7 +21,7 @@
 
   <div th:with="formAction=${hotelDto.id} == null ? @{/owner/hotels/new} : @{/owner/hotels/{id}/edit(id=${hotelDto.id})},
                   formMethod=${hotelDto.id} == null ? 'post' : 'put'">
-    <form th:action="${formAction}" th:object="${hotelDto}" method="post">
+    <form th:action="${formAction}" th:object="${hotelDto}" method="post" enctype="multipart/form-data">
       <input type="hidden" name="_method" th:value="${formMethod}"/>
       <input type="hidden" th:field="*{id}">
 
@@ -69,6 +69,9 @@
       <div th:if="${#fields.hasErrors('amenities')}" class="text-danger small mb-2">
         <span th:errors="*{amenities}"></span>
       </div>
+
+      <label>Upload Images</label>
+      <input type="file" th:field="*{images}" multiple class="form-control mb-3">
 
       <button type="submit" class="btn btn-info col-2"
               th:text="${hotelDto.id} != null ? 'Update Hotel' : 'Create Hotel'">

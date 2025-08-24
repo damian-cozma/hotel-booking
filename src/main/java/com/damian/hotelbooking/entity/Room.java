@@ -43,9 +43,6 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private Set<Booking> bookings;
 
-    @Column(name = "image_path")
-    private String imagePath;
-
     @ManyToMany
     @JoinTable(
             name = "room_amenities",
