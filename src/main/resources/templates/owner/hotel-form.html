@@ -79,7 +79,7 @@
             <label>Upload Images</label>
             <input type="file" th:field="*{images}" multiple class="form-control mb-3">
 
-            <button type="submit" class="btn btn-info col-2"
+            <button type="submit" class="btn btn-primary col-2"
                     th:text="${hotelDto.id} != null ? 'Update Hotel' : 'Create Hotel'">
                 Save
             </button>
@@ -88,6 +88,8 @@
 
     <hr>
     <a th:href="@{/owner/hotels/list}">Back to Hotels List</a>
+
+    <br><br>
 </div>
 
 <div th:replace="common/layout :: footer"></div>

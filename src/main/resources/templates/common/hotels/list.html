@@ -73,13 +73,13 @@
             </div>
 
             <div class="col-md-3">
-                <label class="form-label">Check-in</label>
+                <label class="form-label">Check-in (Required)</label>
                 <input type="text" id="searchCheckInDate" name="checkInDate" class="form-control"
                        th:value="${param.checkInDate}">
             </div>
 
             <div class="col-md-3">
-                <label class="form-label">Check-out</label>
+                <label class="form-label">Check-out (Required)</label>
                 <input type="text" id="searchCheckOutDate" name="checkOutDate" class="form-control"
                        th:value="${param.checkOutDate}">
             </div>
@@ -118,14 +118,14 @@
                     </div>
                     <td th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'No listings available'"></td>
                     <div class="mt-auto text-end">
-                        <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-sm btn-info">View</a>
+                        <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-sm btn-outline-primary">View</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <br>
+    <br><br>
 
 </main>
 

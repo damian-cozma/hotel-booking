@@ -20,8 +20,25 @@
 
     <section class="mb-5">
         <h3 class="mb-4">Hot Listings</h3>
+
+<!--    UNCOMMENT LATER-->
+<!--        <div class="row g-4">-->
+<!--            <div class="col-md-4" th:each="hotel : ${hotListings}">-->
+<!--                <div class="card h-100 shadow-sm">-->
+<!--                    <img th:src="${hotel.imageUrls[0]}" class="card-img-top" alt="Hotel Image" style="height:200px; object-fit:cover;">-->
+<!--                    <div class="card-body d-flex flex-column">-->
+<!--                        <h5 class="card-title" th:text="${hotel.name}">Hotel Name</h5>-->
+<!--                        <p class="card-text" th:text="${hotel.description}">Short description...</p>-->
+<!--                        <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-primary mt-auto">View Details</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    UNCOMMENT LATER-->
+
+<!--    PLACEHOLDER-->
         <div class="row g-4">
-            <div class="col-md-4" th:each="hotel : ${hotListings}">
+            <div class="col-md-4" th:each="hotel : ${hotels}">
                 <div class="card h-100 shadow-sm">
                     <img th:src="${hotel.imageUrls[0]}" class="card-img-top" alt="Hotel Image" style="height:200px; object-fit:cover;">
                     <div class="card-body d-flex flex-column">
@@ -32,6 +49,8 @@
                 </div>
             </div>
         </div>
+<!--    PLACEHOLDER-->
+
     </section>
 
     <section class="mb-5">
