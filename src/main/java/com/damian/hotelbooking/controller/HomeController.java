@@ -18,13 +18,17 @@ import java.util.List;
 public class HomeController {
 
     private final UserService userService;
+    private final HotelService hotelService;
 
-    public HomeController(UserService userService) {
+    public HomeController(UserService userService, HotelService hotelService) {
         this.userService = userService;
+        this.hotelService = hotelService;
     }
 
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        model.addAttribute("hotels", hotelService.listHotels());
+        model.addAttribute("hotListings", hotelService.getTopBookedHotels());
         return "common/home";
     }
 

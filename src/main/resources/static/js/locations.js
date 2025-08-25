@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (currentCountry) {
                 countrySelect.value = currentCountry;
-                await loadStates(currentCountry, true); // true => vine din preselect
+                await loadStates(currentCountry, true);
             }
         } catch (e) {
             console.error("Error loading countries:", e);

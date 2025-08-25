@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Hotel Booking | Homepage</title>
+    <title>Roomie | Homepage</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/styles.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -12,9 +12,67 @@
 
 <div th:replace="common/layout :: navbar"></div>
 
-<main class="flex-grow-1 container mt-4">
-    <h1>Welcome to Roomie!</h1>
-    <p>Here you can see available rooms...</p>
+<main class="flex-grow-1 container py-5">
+
+    <section class="text-center mb-5">
+        <h1 class="display-5">Welcome to Roomie!</h1>
+    </section>
+
+    <section class="mb-5">
+        <h3 class="mb-4">Hot Listings</h3>
+        <div class="row g-4">
+            <div class="col-md-4" th:each="hotel : ${hotListings}">
+                <div class="card h-100 shadow-sm">
+                    <img th:src="${hotel.imageUrls[0]}" class="card-img-top" alt="Hotel Image" style="height:200px; object-fit:cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${hotel.name}">Hotel Name</h5>
+                        <p class="card-text" th:text="${hotel.description}">Short description...</p>
+                        <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-primary mt-auto">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h3 class="mb-4">Tips from Specialists</h3>
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="/assets/sunscreen.png" class="card-img-top" alt="Tip Image 1" style="height:200px; object-fit:cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Sunscreen... Yay or nay?</h5>
+                        <p class="card-text">Are you using sunscreen the right way? Check out this article and find why you should use it even in the plane!</p>
+                        <a href="https://www.bbc.com/news/articles/c1lj5r48vmmo" class="btn btn-primary mt-auto" target="_blank">Read More</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="/assets/safety.png" class="card-img-top" alt="Tip Image 2" style="height:200px; object-fit:cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Stay Safe on Your Trip</h5>
+                        <p class="card-text">From staying hydrated to avoiding common travel illnesses, learn key tips to keep your vacation healthy and safe.</p>
+                        <a href="https://www.cdc.gov/travel" class="btn btn-primary mt-auto" target="_blank">Read More</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="/assets/packing.png" class="card-img-top" alt="Tip Image 3" style="height:200px; object-fit:cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Pack Smart, Travel Light</h5>
+                        <p class="card-text">Discover essential packing hacks and must-have items for a stress-free vacation. Avoid overpacking and stay organized!</p>
+                        <a href="https://www.travelandleisure.com/travel-tips/packing-tips" class="btn btn-primary mt-auto" target="_blank">Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <div th:replace="common/layout :: footer"></div>
@@ -22,5 +80,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-

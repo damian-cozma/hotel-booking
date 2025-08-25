@@ -1,13 +1,11 @@
 package com.damian.hotelbooking.service;
 
 import com.damian.hotelbooking.dto.HotelDto;
-import com.damian.hotelbooking.entity.Amenity;
-import com.damian.hotelbooking.entity.Hotel;
-import com.damian.hotelbooking.entity.HotelImage;
-import com.damian.hotelbooking.entity.Room;
+import com.damian.hotelbooking.entity.*;
 import com.damian.hotelbooking.exception.HotelNotFoundException;
 import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.repository.AmenityRepository;
+import com.damian.hotelbooking.repository.BookingRepository;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.UserRepository;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,16 +25,18 @@ public class HotelServiceImpl implements HotelService {
     private final UserRepository userRepository;
     private final AmenityRepository amenityRepository;
     private final HotelImageService hotelImageService;
+    private final BookingRepository bookingRepository;
 
     public HotelServiceImpl(HotelRepository hotelRepository,
                             UserService userService,
                             UserRepository userRepository,
-                            AmenityRepository amenityRepository, HotelImageService hotelImageService) {
+                            AmenityRepository amenityRepository, HotelImageService hotelImageService, BookingRepository bookingRepository) {
         this.hotelRepository = hotelRepository;
         this.userService = userService;
         this.userRepository = userRepository;
         this.amenityRepository = amenityRepository;
         this.hotelImageService = hotelImageService;
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
@@ -170,6 +170,32 @@ public class HotelServiceImpl implements HotelService {
         if (!hotelDto.getOwnerId().equals(userService.findIdByUsername(principal.getName()))) {
             throw new AccessDeniedException("You are not the owner of this hotel");
         }
+    }
+
+    @Override
+    public List<HotelDto> getTopBookedHotels() {
+        List<Booking> bookings = bookingRepository.findAll();
+
+        Map<Long, Long> hotelBookingCounts = bookings.stream()
+                .filter(booking -> booking.getRoom() != null && booking.getRoom().getHotel() != null)
+                .collect(Collectors.groupingBy(
+                        booking -> booking.getRoom().getHotel().getId(),
+                        Collectors.counting()
+                ));
+        System.out.println(hotelBookingCounts);
+
+
+        List<Long> topHotelIds = hotelBookingCounts.entrySet().stream()
+                .sorted((entry1, entry2) -> Long.compare(entry2.getValue(), entry1.getValue()))
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        return topHotelIds.stream()
+                .map(hotelId -> hotelRepository.findById(hotelId).orElse(null))
+                .filter(Objects::nonNull)
+                .map(this::toHotelDto)
+                .toList();
     }
 
     // Mappere HotelDto <-> Hotel

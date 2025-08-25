@@ -14,6 +14,8 @@ public interface HotelService {
 
     List<HotelDto> listHotels();
 
+    List<HotelDto> getTopBookedHotels();
+
     HotelDto findById(Long hotelId);
 
     List<HotelDto> searchHotels(String country, String city, String state, List<String> amenities, int capacity,
