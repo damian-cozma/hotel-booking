@@ -29,11 +29,11 @@ public class Hotel {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "rating")
-    private Double rating;
-
     @Column(name = "country", nullable = false)
     private String country;
+
+    @Column(name = "state", nullable = false)
+    private String state;
 
     @Column(name = "city", nullable = false)
     private String city;

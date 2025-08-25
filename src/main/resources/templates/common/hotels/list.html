@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/styles.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="common/layout :: navbar"></div>
@@ -16,12 +17,15 @@
     <div class="card p-3 mb-4 shadow-sm">
         <h5 class="mb-3">Search Hotels</h5>
         <form th:action="@{/hotels/search}" method="get" class="row g-3">
+
             <div class="col-md-3">
                 <input type="text" name="country" class="form-control" placeholder="Country"
                        th:value="${param.country}">
             </div>
+
             <div class="col-md-3">
-                <input type="text" name="city" class="form-control" placeholder="City" th:value="${param.city}">
+                <input type="text" name="city" class="form-control" placeholder="City"
+                       th:value="${param.city}">
             </div>
 
             <div class="col-md-3">
@@ -34,8 +38,7 @@
                     <option value="" selected>Any Room Type</option>
                     <option th:each="type : ${T(com.damian.hotelbooking.entity.RoomType).values()}"
                             th:value="${type.name()}"
-                            th:text="${type.name()}">
-                    </option>
+                            th:text="${type.name()}"></option>
                 </select>
             </div>
 
@@ -54,24 +57,22 @@
                 </div>
             </div>
 
-            <script>
-                const btn = document.getElementById('amenitiesBtn');
-                const panel = document.getElementById('amenitiesPanel');
+            <div class="col-md-3">
+                <label>Check-in Date</label>
+                <input type="text" id="searchCheckInDate" name="checkInDate" class="form-control"
+                       th:value="${param.checkInDate}">
+            </div>
 
-                btn.addEventListener('click', () => {
-                    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!btn.contains(e.target) && !panel.contains(e.target)) {
-                        panel.style.display = 'none';
-                    }
-                });
-            </script>
+            <div class="col-md-3">
+                <label>Check-out Date</label>
+                <input type="text" id="searchCheckOutDate" name="checkOutDate" class="form-control"
+                       th:value="${param.checkOutDate}">
+            </div>
 
             <div class="col-12 mt-2">
                 <button type="submit" class="btn btn-primary w-100">Search</button>
             </div>
+
         </form>
     </div>
 
@@ -80,37 +81,26 @@
         <div class="col" th:each="hotel : ${hotels}">
             <div class="card h-100 shadow-sm">
                 <img th:src="${#lists.isEmpty(hotel.imageUrls)} ? '/images/hotel-placeholder.jpg' : @{${hotel.imageUrls[0]}}"
-                     class="card-img-top"
-                     alt="Hotel Image"
+                     class="card-img-top" alt="Hotel Image"
                      style="width:100%; height:250px; object-fit:cover; border-radius:8px;">
-
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title" th:text="${hotel.name}"></h5>
-
                     <p class="card-text mb-1">
-                        <strong>Address:</strong> <span
-                            th:text="${hotel.street + ', ' + hotel.city + ', ' + hotel.country}"></span>
+                        <strong>Address:</strong>
+                        <span th:text="${hotel.street + ', ' + hotel.city + ', ' + hotel.country}"></span>
                     </p>
                     <p class="card-text mb-2">
                         <strong>Description:</strong> <span th:text="${hotel.description}"></span>
                     </p>
-                    <p class="card-text mb-2">
-                        <strong>Rating:</strong> <span th:text="${hotel.rating}"></span>
-                    </p>
-
                     <div class="mb-2">
                         <strong>Amenities:</strong>
                         <span th:each="amenity, iterStat : ${hotel.amenities}"
-                              th:if="${iterStat.index < 3}"
-                              class="badge bg-primary me-1 mb-1" th:text="${amenity}"></span>
-
+                              th:if="${iterStat.index < 3}" class="badge bg-primary me-1 mb-1"
+                              th:text="${amenity}"></span>
                         <span th:if="${hotel.amenities.size() > 3}" class="text-muted">+
                             <span th:text="${hotel.amenities.size() - 3}"></span> more</span>
                     </div>
-
                     <td th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'No listings available'"></td>
-
-
                     <div class="mt-auto text-end">
                         <a th:href="@{/hotels/{id}(id=${hotel.id})}" class="btn btn-sm btn-info">View</a>
                     </div>
@@ -121,10 +111,45 @@
 
 </main>
 
-<br>
-
 <div th:replace="common/layout :: footer"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const btn = document.getElementById('amenitiesBtn');
+        const panel = document.getElementById('amenitiesPanel');
+        btn.addEventListener('click', () => {
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        });
+        document.addEventListener('click', (e) => {
+            if (!btn.contains(e.target) && !panel.contains(e.target)) {
+                panel.style.display = 'none';
+            }
+        });
+
+        const checkOutPickerSearch = flatpickr("#searchCheckOutDate", {
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        });
+
+        flatpickr("#searchCheckInDate", {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    const minCheckOut = new Date(selectedDates[0]);
+                    minCheckOut.setDate(minCheckOut.getDate() + 1);
+                    checkOutPickerSearch.set("minDate", minCheckOut);
+                }
+            }
+        });
+
+    });
+    /*]]>*/
+</script>
 
 </body>
 </html>

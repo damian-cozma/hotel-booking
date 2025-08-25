@@ -1,91 +1,98 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Add/Edit Hotel</title>
-  <link rel="stylesheet" href="/styles.css"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Add/Edit Hotel</title>
+    <link rel="stylesheet" href="/styles.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
 
 <div th:replace="common/layout :: navbar"></div>
 
 <div class="container">
-  <br>
-  <h3>Hotel Management</h3>
-  <hr>
+    <br>
+    <h3>Hotel Management</h3>
+    <hr>
 
-  <p class="h4 mb-4" th:text="${hotelDto.id} != null ? 'Edit Hotel' : 'Add New Hotel'">Add/Edit Hotel</p>
+    <p class="h4 mb-4" th:text="${hotelDto.id} != null ? 'Edit Hotel' : 'Add New Hotel'">Add/Edit Hotel</p>
 
-  <div th:with="formAction=${hotelDto.id} == null ? @{/owner/hotels/new} : @{/owner/hotels/{id}/edit(id=${hotelDto.id})},
+    <div th:with="formAction=${hotelDto.id} == null ? @{/owner/hotels/new} : @{/owner/hotels/{id}/edit(id=${hotelDto.id})},
                   formMethod=${hotelDto.id} == null ? 'post' : 'put'">
-    <form th:action="${formAction}" th:object="${hotelDto}" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="_method" th:value="${formMethod}"/>
-      <input type="hidden" th:field="*{id}">
+        <form th:action="${formAction}" th:object="${hotelDto}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="_method" th:value="${formMethod}"/>
+            <input type="hidden" th:field="*{id}">
 
-      <input type="text" th:field="*{name}" class="form-control mb-3 w-50" placeholder="Hotel Name">
-      <div th:if="${#fields.hasErrors('name')}" class="text-danger small mb-2">
-        <span th:errors="*{name}"></span>
-      </div>
+            <input type="text" th:field="*{name}" class="form-control mb-3 w-50" placeholder="Hotel Name">
+            <div th:if="${#fields.hasErrors('name')}" class="text-danger small mb-2">
+                <span th:errors="*{name}"></span>
+            </div>
 
-      <input type="text" th:field="*{country}" class="form-control mb-3 w-50" placeholder="Country">
-      <div th:if="${#fields.hasErrors('country')}" class="text-danger small mb-2">
-        <span th:errors="*{country}"></span>
-      </div>
+            <select id="countrySelect" th:field="*{country}" class="form-control mb-3 w-50"
+                    th:attr="data-current-country=${hotelDto.country}">
+                <option value="">Select Country</option>
+            </select>
 
-      <input type="text" th:field="*{city}" class="form-control mb-3 w-50" placeholder="City">
-      <div th:if="${#fields.hasErrors('city')}" class="text-danger small mb-2">
-        <span th:errors="*{city}"></span>
-      </div>
+            <select id="stateSelect" th:field="*{state}" class="form-control mb-3 w-50" disabled
+                    th:attr="data-current-state=${hotelDto.state}">
+                <option value="">Select County</option>
+            </select>
 
-      <input type="text" th:field="*{street}" class="form-control mb-3 w-50" placeholder="Street">
-      <div th:if="${#fields.hasErrors('street')}" class="text-danger small mb-2">
-        <span th:errors="*{street}"></span>
-      </div>
+            <select id="citySelect" th:field="*{city}" class="form-control mb-3 w-50" disabled
+                    th:attr="data-current-city=${hotelDto.city}">
+                <option value="">Select City</option>
+            </select>
 
-      <input type="text" th:field="*{postalCode}" class="form-control mb-3 w-50" placeholder="Postal Code">
-      <div th:if="${#fields.hasErrors('postalCode')}" class="text-danger small mb-2">
-        <span th:errors="*{postalCode}"></span>
-      </div>
+            <input type="text" th:field="*{street}" class="form-control mb-3 w-50" placeholder="Street">
+            <div th:if="${#fields.hasErrors('street')}" class="text-danger small mb-2">
+                <span th:errors="*{street}"></span>
+            </div>
 
-      <input type="text" th:field="*{phoneNumber}" class="form-control mb-3 w-50" placeholder="Phone Number">
-      <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger small mb-2">
-        <span th:errors="*{phoneNumber}"></span>
-      </div>
+            <input type="text" th:field="*{postalCode}" class="form-control mb-3 w-50" placeholder="Postal Code">
+            <div th:if="${#fields.hasErrors('postalCode')}" class="text-danger small mb-2">
+                <span th:errors="*{postalCode}"></span>
+            </div>
 
-      <input type="email" th:field="*{email}" class="form-control mb-3 w-50" placeholder="Email">
-      <div th:if="${#fields.hasErrors('email')}" class="text-danger small mb-2">
-        <span th:errors="*{email}"></span>
-      </div>
+            <input type="text" th:field="*{phoneNumber}" class="form-control mb-3 w-50" placeholder="Phone Number">
+            <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger small mb-2">
+                <span th:errors="*{phoneNumber}"></span>
+            </div>
 
-      <textarea th:field="*{description}" class="form-control mb-3 w-50" placeholder="Description"></textarea>
-      <div th:if="${#fields.hasErrors('description')}" class="text-danger small mb-2">
-        <span th:errors="*{description}"></span>
-      </div>
+            <input type="email" th:field="*{email}" class="form-control mb-3 w-50" placeholder="Email">
+            <div th:if="${#fields.hasErrors('email')}" class="text-danger small mb-2">
+                <span th:errors="*{email}"></span>
+            </div>
 
-      <textarea th:field="*{amenities}" class="form-control mb-3 w-50" placeholder="Amenities (comma separated)"></textarea>
-      <div th:if="${#fields.hasErrors('amenities')}" class="text-danger small mb-2">
-        <span th:errors="*{amenities}"></span>
-      </div>
+            <textarea th:field="*{description}" class="form-control mb-3 w-50" placeholder="Description"></textarea>
+            <div th:if="${#fields.hasErrors('description')}" class="text-danger small mb-2">
+                <span th:errors="*{description}"></span>
+            </div>
 
-      <label>Upload Images</label>
-      <input type="file" th:field="*{images}" multiple class="form-control mb-3">
+            <textarea th:field="*{amenities}" class="form-control mb-3 w-50"
+                      placeholder="Amenities (comma separated)"></textarea>
+            <div th:if="${#fields.hasErrors('amenities')}" class="text-danger small mb-2">
+                <span th:errors="*{amenities}"></span>
+            </div>
 
-      <button type="submit" class="btn btn-info col-2"
-              th:text="${hotelDto.id} != null ? 'Update Hotel' : 'Create Hotel'">
-        Save
-      </button>
-    </form>
-  </div>
+            <label>Upload Images</label>
+            <input type="file" th:field="*{images}" multiple class="form-control mb-3">
 
-  <hr>
-  <a th:href="@{/owner/hotels/list}">Back to Hotels List</a>
+            <button type="submit" class="btn btn-info col-2"
+                    th:text="${hotelDto.id} != null ? 'Update Hotel' : 'Create Hotel'">
+                Save
+            </button>
+        </form>
+    </div>
+
+    <hr>
+    <a th:href="@{/owner/hotels/list}">Back to Hotels List</a>
 </div>
 
 <div th:replace="common/layout :: footer"></div>
 
+<script src="/js/locations.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

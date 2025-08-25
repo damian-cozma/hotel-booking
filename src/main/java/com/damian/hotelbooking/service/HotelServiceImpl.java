@@ -10,7 +10,6 @@ import com.damian.hotelbooking.exception.UserNotFoundException;
 import com.damian.hotelbooking.repository.AmenityRepository;
 import com.damian.hotelbooking.repository.HotelRepository;
 import com.damian.hotelbooking.repository.UserRepository;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -66,12 +65,12 @@ public class HotelServiceImpl implements HotelService {
 
         } else {
             hotel = new Hotel();
-            hotel.setRating(0.0);
         }
 
         hotel.setName(hotelDto.getName());
         hotel.setCity(hotelDto.getCity());
         hotel.setCountry(hotelDto.getCountry());
+        hotel.setState(hotelDto.getState());
         hotel.setStreet(hotelDto.getStreet());
         hotel.setPostalCode(hotelDto.getPostalCode());
         hotel.setPhoneNumber(hotelDto.getPhoneNumber());
@@ -115,11 +114,12 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public List<HotelDto> searchHotels(String country, String city, List<String> amenities, int capacity,
+    public List<HotelDto> searchHotels(String country, String city, String state, List<String> amenities, int capacity,
                                        String roomType, LocalDate checkInDate, LocalDate checkOutDate) {
         return hotelRepository.findAll()
                 .stream()
                 .filter(hotel -> country == null || country.isBlank() || hotel.getCountry().equalsIgnoreCase(country))
+                .filter(hotel -> state == null || state.isBlank() || hotel.getState().equalsIgnoreCase(state))
                 .filter(hotel -> city == null || city.isBlank() || hotel.getCity().equalsIgnoreCase(city))
                 .filter(hotel -> {
                     if (amenities == null || amenities.isEmpty()) return true;
@@ -177,13 +177,13 @@ public class HotelServiceImpl implements HotelService {
         hotelDto.setId(hotel.getId());
         hotelDto.setName(hotel.getName());
         hotelDto.setCountry(hotel.getCountry());
+        hotelDto.setState(hotel.getState());
         hotelDto.setCity(hotel.getCity());
         hotelDto.setPostalCode(hotel.getPostalCode());
         hotelDto.setPhoneNumber(hotel.getPhoneNumber());
         hotelDto.setEmail(hotel.getEmail());
         hotelDto.setStreet(hotel.getStreet());
         hotelDto.setDescription(hotel.getDescription());
-        hotelDto.setRating(hotel.getRating());
         Set<String> amenities = hotel.getAmenities().stream()
                 .map(Amenity::getName)
                 .collect(Collectors.toSet());
@@ -215,6 +215,7 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = new Hotel();
         hotel.setName(hotelDto.getName());
         hotel.setCity(hotelDto.getCity());
+        hotel.setState(hotelDto.getState());
         hotel.setCountry(hotelDto.getCountry());
         hotel.setStreet(hotelDto.getStreet());
         hotel.setPostalCode(hotelDto.getPostalCode());
@@ -222,7 +223,6 @@ public class HotelServiceImpl implements HotelService {
         hotel.setEmail(hotelDto.getEmail());
         hotel.setDescription(hotelDto.getDescription());
         hotel.setOwner(userService.findById(hotelDto.getOwnerId()));
-        hotel.setRating(0.0);
 
         return hotel;
     }

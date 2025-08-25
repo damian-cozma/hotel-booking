@@ -28,6 +28,10 @@ public class HotelDto {
     @Size(max = 100, message = "Country must be at most 100 characters")
     private String country;
 
+    @NotBlank(message = "State is required")
+    @Size(max = 100, message = "State must be at most 100 characters")
+    private String state;
+
     @NotBlank(message = "City is required")
     @Size(max = 100, message = "City must be at most 100 characters")
     private String city;
@@ -57,8 +61,6 @@ public class HotelDto {
     private Long ownerId;
 
     private Set<String> amenities;
-
-    private Double rating;
 
     private Double pricePerNight;
 

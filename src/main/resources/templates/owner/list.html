@@ -38,10 +38,6 @@
                         <span th:text="${hotel.street + ', ' + hotel.city + ', ' + hotel.country}"></span>
                     </p>
 
-                    <p class="card-text mb-2">
-                        <strong>Rating:</strong> <span th:text="${hotel.rating}"></span>
-                    </p>
-
                     <div class="mb-2">
                         <strong>Amenities:</strong>
                         <span th:each="amenity, iterStat : ${hotel.amenities}"

@@ -64,6 +64,7 @@ public class HotelController {
     public String searchHotels(
             @RequestParam(value = "country", required = false) String country,
             @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "state", required = false) String state,
             @RequestParam(value = "amenities", required = false) List<String> amenities,
             @RequestParam(value = "capacity", defaultValue = "0") int capacity,
             @RequestParam(value = "roomType", required = false) String roomType,
@@ -71,7 +72,7 @@ public class HotelController {
             @RequestParam(value = "checkOutDate", required = true) LocalDate checkOutDate,
             Model model) {
 
-        model.addAttribute("hotels", hotelService.searchHotels(country, city, amenities, capacity, roomType, checkInDate, checkOutDate));
+        model.addAttribute("hotels", hotelService.searchHotels(country, city, state, amenities, capacity, roomType, checkInDate, checkOutDate));
         model.addAttribute("allAmenities", amenityService.findAllAmenities());
 
         return "common/hotels/list";
@@ -84,19 +85,20 @@ public class HotelController {
                                         Principal principal,
                                         Model model) {
 
-        model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
-        model.addAttribute("hotelId", hotelId);
-        model.addAttribute("roomId", roomId);
-
         Room room = roomService.findById(roomId);
-        model.addAttribute("roomPrice", room.getPrice());
-        model.addAttribute("room", room);
-
         BookingDto bookingDto = new BookingDto();
         bookingDto.setUserId(userService.findByUsername(principal.getName()).getId());
         bookingDto.setRoomId(roomId);
+        List<LocalDate[]> unavailableDates = roomService.getUnavailableDateRanges(roomId);
 
+        model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
+        model.addAttribute("hotelId", hotelId);
+        model.addAttribute("roomId", roomId);
+        model.addAttribute("roomPrice", room.getPrice());
+        model.addAttribute("room", room);
         model.addAttribute("booking", bookingDto);
+        model.addAttribute("unavailableDates", unavailableDates);
+
 
         return "common/hotels/book";
     }
