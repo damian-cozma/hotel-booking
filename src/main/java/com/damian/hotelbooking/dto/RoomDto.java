@@ -33,5 +33,5 @@ public class RoomDto {
 
     private boolean available;
 
-    private String amenities;
+    private Set<String> amenities;
 }

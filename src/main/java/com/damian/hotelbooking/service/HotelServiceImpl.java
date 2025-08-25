@@ -83,8 +83,12 @@ public class HotelServiceImpl implements HotelService {
 
         Set<Amenity> amenitySet = amenities.stream()
                 .filter(name -> !name.trim().isEmpty())
-                .map(name -> amenityRepository.findByName(name).orElse(null))
-                .filter(Objects::nonNull)
+                .map(name -> amenityRepository.findByName(name)
+                        .orElseGet(() -> {
+                            Amenity newAmenity = new Amenity();
+                            newAmenity.setName(name);
+                            return amenityRepository.save(newAmenity);
+                        }))
                 .collect(Collectors.toSet());
 
         hotel.setAmenities(amenitySet);

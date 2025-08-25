@@ -58,15 +58,18 @@ public class RoomServiceImpl implements RoomService {
         room.setType(roomDto.getType());
         room.setAvailable(roomDto.isAvailable());
 
-        Set<Amenity> amenitySet = Collections.emptySet();
-        if (roomDto.getAmenities() != null && !roomDto.getAmenities().isBlank()) {
-            amenitySet = Arrays.stream(roomDto.getAmenities().split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .map(name -> amenityRepository.findByName(name).orElse(null))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
-        }
+        Set<String> amenities = roomDto.getAmenities();
+        if (amenities == null) amenities = Collections.emptySet();
+
+        Set<Amenity> amenitySet = amenities.stream()
+                .filter(name -> !name.trim().isEmpty())
+                .map(name -> amenityRepository.findByName(name)
+                        .orElseGet(() -> {
+                            Amenity newAmenity = new Amenity();
+                            newAmenity.setName(name);
+                            return amenityRepository.save(newAmenity);
+                        }))
+                .collect(Collectors.toSet());
 
         room.setAmenities(amenitySet);
 

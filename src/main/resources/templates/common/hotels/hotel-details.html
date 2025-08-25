@@ -47,20 +47,16 @@
             <p th:text="${hotel.description}">Hotel description goes here.</p>
 
             <h5>Amenities:</h5>
-            <ul class="list-unstyled mb-3">
+            <ul class="list-unstyled mb-3" style="columns: 3;">
                 <li th:each="amenity : ${hotel.amenities}">
                     <i class="bi bi-check-circle text-success me-1"></i>
                     <span th:text="${amenity}"></span>
                 </li>
             </ul>
 
+
             <div class="mt-auto d-flex justify-content-between align-items-center">
                 <h4 class="text-primary mb-0" th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'No listings available'"></h4>
-                <a th:href="@{/owner/hotels/{hotelId}/rooms/add(hotelId=${hotel.id})}"
-                   class="btn btn-outline-warning"
-                   sec:authorize="hasRole('HOTEL_ADMIN')">
-                    Add Room
-                </a>
             </div>
         </div>
     </div>
@@ -72,20 +68,62 @@
                 <th>Type</th>
                 <th>Capacity</th>
                 <th>Price/Night</th>
+                <th>Amenities</th>
                 <th>Actions</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="room : ${rooms}">
+            <tr th:each="room, iter : ${rooms}">
                 <td th:text="${room.type}"></td>
                 <td th:text="${room.capacity}"></td>
                 <td th:text="${room.price}"></td>
+                <td>
+                    <div class="d-flex flex-wrap gap-2">
+                        <!-- Primele 3 amenity-uri -->
+                        <span class="badge bg-light text-dark border"
+                              th:each="amenity, stat : ${room.amenities}"
+                              th:if="${stat.index < 3}"
+                              th:text="${amenity.name}">
+            </span>
+
+                        <!-- Buton +More -->
+                        <span class="badge bg-primary"
+                              th:if="${room.amenities.size() > 3}"
+                              data-bs-toggle="modal"
+                              th:attr="data-bs-target='#amenitiesModal__' + ${iter.index}">
+                + More
+            </span>
+                    </div>
+
+                    <!-- Modal cu toate amenity-urile -->
+                    <div class="modal fade"
+                         th:id="'amenitiesModal__' + ${iter.index}"
+                         tabindex="-1"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Room Amenities</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row row-cols-3 g-3">
+                                        <div class="col" th:each="amenity : ${room.amenities}">
+                                            <i class="bi bi-check-circle text-success me-1"></i>
+                                            <span th:text="${amenity.name}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
                 <td class="d-flex gap-2">
-                    <button type="submit" class="btn btn-secondary btn-sm">View</button>
                     <a th:href="@{/hotels/{hotelId}/rooms/{roomId}/book(hotelId=${hotel.id}, roomId=${room.id})}"
                        class="btn btn-primary btn-sm">Book</a>
                 </td>
             </tr>
+
             <tr th:if="${#lists.isEmpty(rooms)}">
                 <td colspan="4" class="text-center">No available rooms.</td>
             </tr>
