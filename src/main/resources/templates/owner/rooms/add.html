@@ -49,19 +49,6 @@
         </div>
 
         <div class="mb-3">
-            <label>Description</label>
-            <textarea th:field="*{description}" class="form-control"></textarea>
-            <div th:if="${#fields.hasErrors('description')}" class="text-danger small">
-                <span th:text="${#fields.errors('description')}"></span>
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label>Available</label>
-            <input type="checkbox" th:field="*{available}" class="form-check-input"/>
-        </div>
-
-        <div class="mb-3">
             <label>Amenities (comma separated)</label>
             <input type="text" th:field="*{amenities}" class="form-control"/>
             <div th:if="${#fields.hasErrors('amenities')}" class="text-danger small">

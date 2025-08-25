@@ -52,11 +52,9 @@ public class RoomServiceImpl implements RoomService {
                 .orElseThrow(() -> new HotelNotFoundException(hotelId.toString()));
         room.setHotel(hotel);
 
-        room.setDescription(roomDto.getDescription());
         room.setCapacity(roomDto.getCapacity());
         room.setPrice(roomDto.getPrice());
         room.setType(roomDto.getType());
-        room.setAvailable(roomDto.isAvailable());
 
         Set<String> amenities = roomDto.getAmenities();
         if (amenities == null) amenities = Collections.emptySet();

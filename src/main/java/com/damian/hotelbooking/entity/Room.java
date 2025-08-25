@@ -34,12 +34,6 @@ public class Room {
     @Column(name = "price", nullable = false)
     private double price;
 
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "available", nullable = false)
-    private boolean available;
-
     @OneToMany(mappedBy = "room")
     private Set<Booking> bookings;
 

@@ -79,23 +79,19 @@
                 <td th:text="${room.price}"></td>
                 <td>
                     <div class="d-flex flex-wrap gap-2">
-                        <!-- Primele 3 amenity-uri -->
                         <span class="badge bg-light text-dark border"
                               th:each="amenity, stat : ${room.amenities}"
                               th:if="${stat.index < 3}"
                               th:text="${amenity.name}">
-            </span>
+                        </span>
 
-                        <!-- Buton +More -->
                         <span class="badge bg-primary"
                               th:if="${room.amenities.size() > 3}"
                               data-bs-toggle="modal"
                               th:attr="data-bs-target='#amenitiesModal__' + ${iter.index}">
-                + More
-            </span>
+                        + More
+                        </span>
                     </div>
-
-                    <!-- Modal cu toate amenity-urile -->
                     <div class="modal fade"
                          th:id="'amenitiesModal__' + ${iter.index}"
                          tabindex="-1"

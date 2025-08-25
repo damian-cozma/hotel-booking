@@ -197,7 +197,6 @@ public class HotelServiceImpl implements HotelService {
         if (hotel.getRooms() != null && !hotel.getRooms().isEmpty()) {
             hotelDto.setPricePerNight(
                     hotel.getRooms().stream()
-                            .filter(Room::isAvailable)
                             .map(Room::getPrice)
                             .min(Double::compare)
                             .orElse(null)

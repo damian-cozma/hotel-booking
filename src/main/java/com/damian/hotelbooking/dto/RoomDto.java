@@ -28,10 +28,5 @@ public class RoomDto {
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     private double price;
 
-    @Size(max = 1000, message = "Description must be at most 1000 characters")
-    private String description;
-
-    private boolean available;
-
     private Set<String> amenities;
 }
