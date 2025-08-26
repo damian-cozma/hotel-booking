@@ -26,16 +26,20 @@ public class RoomServiceImpl implements RoomService {
     private final HotelRepository hotelRepository;
     private final HotelService hotelService;
     private final BookingRepository bookingRepository;
+    private final RoomImageService roomImageService;
 
     public RoomServiceImpl(AmenityRepository amenityRepository,
                            RoomRepository roomRepository,
                            HotelRepository hotelRepository,
-                           HotelService hotelService, BookingRepository bookingRepository) {
+                           HotelService hotelService,
+                           BookingRepository bookingRepository,
+                           RoomImageService roomImageService) {
         this.amenityRepository = amenityRepository;
         this.roomRepository = roomRepository;
         this.hotelRepository = hotelRepository;
         this.hotelService = hotelService;
         this.bookingRepository = bookingRepository;
+        this.roomImageService = roomImageService;
     }
 
     @Override
@@ -55,6 +59,10 @@ public class RoomServiceImpl implements RoomService {
         room.setCapacity(roomDto.getCapacity());
         room.setPrice(roomDto.getPrice());
         room.setType(roomDto.getType());
+        room.setRoomNumber(roomDto.getRoomNumber());
+        room.setDescription(roomDto.getDescription());
+        room.setArea(roomDto.getArea());
+        room.setFloor(roomDto.getFloor());
 
         Set<String> amenities = roomDto.getAmenities();
         if (amenities == null) amenities = Collections.emptySet();
@@ -72,6 +80,10 @@ public class RoomServiceImpl implements RoomService {
         room.setAmenities(amenitySet);
 
         roomRepository.save(room);
+
+        if (roomDto.getImages() != null && !roomDto.getImages().isEmpty()) {
+            roomImageService.saveImages(roomDto.getImages(), room);
+        }
     }
 
     @Override

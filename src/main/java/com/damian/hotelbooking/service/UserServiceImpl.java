@@ -14,10 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -63,15 +61,14 @@ public class UserServiceImpl implements UserService {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = "{bcrypt}" + passwordEncoder.encode(signupDto.getPassword());
 
-        User user = new User(
-                signupDto.getUsername(),
-                signupDto.getFirstName(),
-                signupDto.getLastName(),
-                signupDto.getEmail(),
-                encodedPassword,
-                signupDto.getPhoneNumber(),
-                UserRole.ROLE_USER
-        );
+        User user = new User();
+        user.setUsername(signupDto.getUsername());
+        user.setFirstName(signupDto.getFirstName());
+        user.setLastName(signupDto.getLastName());
+        user.setEmail(signupDto.getEmail());
+        user.setPassword(encodedPassword);
+        user.setPhoneNumber(signupDto.getPhoneNumber());
+        user.setRole(UserRole.ROLE_USER);
 
         userRepository.save(user);
     }
@@ -80,8 +77,7 @@ public class UserServiceImpl implements UserService {
     public void saveProfile(@Valid @ModelAttribute("profileDto") ProfileDto profileDto, Principal principal,
                             BindingResult bindingResult, Model model) {
 
-        User user = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new UserNotFoundException(principal.getName()));
+        User user = findByUsername(principal.getName());
 
         if (!user.getPhoneNumber().equals(profileDto.getPhoneNumber()) &&
                 userRepository.existsByPhoneNumber(profileDto.getPhoneNumber())) {
@@ -124,12 +120,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean changePassword(Principal principal, String currentPassword, String newPassword,
-                                  String confirmPassword, BindingResult bindingResult, Model model) {
+    public void changePassword(Principal principal, String currentPassword, String newPassword,
+                               String confirmPassword, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("activeSection", "security");
-            return false;
+            return;
         }
 
         User user = userRepository.findByUsername(principal.getName())
@@ -144,12 +140,11 @@ public class UserServiceImpl implements UserService {
         String currentEncodedPassword = user.getPassword().replace("{bcrypt}", "");
         if (!passwordEncoder.matches(currentPassword, currentEncodedPassword)) {
             bindingResult.rejectValue("currentPassword", "error.passwordDto", "Current password is incorrect");
-            return false;
+            return;
         }
 
         user.setPassword("{bcrypt}" + passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        return true;
     }
 
     @Override
@@ -169,15 +164,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileDto getProfile(String name) {
+
         User user = findByUsername(name);
 
-        return new ProfileDto(
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhoneNumber()
-        );
+        ProfileDto profileDto = new ProfileDto(); // poate ar fi trebuit sa il numesc UserDto at this point dar ok
+        profileDto.setUsername(user.getUsername());
+        profileDto.setFirstName(user.getFirstName());
+        profileDto.setLastName(user.getLastName());
+        profileDto.setEmail(user.getEmail());
+        profileDto.setPhoneNumber(user.getPhoneNumber());
+
+        return profileDto;
     }
 
     @Override

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -34,6 +35,18 @@ public class Room {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "area", nullable = false)
+    private double area;
+
+    @Column(name = "description", length = 2000, nullable = false)
+    private String description;
+
+    @Column(name = "floor", nullable = false)
+    private int floor;
+
+    @Column(name = "room_number", nullable = false)
+    private String roomNumber;
+
     @OneToMany(mappedBy = "room")
     private Set<Booking> bookings;
 
@@ -44,5 +57,8 @@ public class Room {
             inverseJoinColumns = @JoinColumn(name = "amenity_id")
     )
     private Set<Amenity> amenities;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomImage> images;
 
 }

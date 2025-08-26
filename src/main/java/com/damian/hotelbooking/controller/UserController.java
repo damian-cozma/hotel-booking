@@ -32,7 +32,7 @@ public class UserController {
         model.addAttribute("editable", false);
         model.addAttribute("activeSection", section);
 
-        if ("security".equals(section)) {
+        if (section.equals("security")) {
             model.addAttribute("passwordDto", new PasswordDto());
         }
 

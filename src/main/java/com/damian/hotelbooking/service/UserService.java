@@ -24,8 +24,8 @@ public interface UserService {
 
     void save(User user);
 
-    boolean changePassword(Principal principal, String currentPassword, String newPassword,
-                           String confirmPassword, BindingResult bindingResult, Model model);
+    void changePassword(Principal principal, String currentPassword, String newPassword,
+                        String confirmPassword, BindingResult bindingResult, Model model);
 
     void deleteAccount(Principal principal, HttpServletRequest request);
 

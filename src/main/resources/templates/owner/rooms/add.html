@@ -19,7 +19,7 @@
     <hr>
 
     <p class="h4 mb-4">Save Room</p>
-    <form th:action="@{'/owner/hotels/' + ${hotelId} + '/rooms/add'}" method="post" th:object="${room}">
+    <form th:action="@{'/owner/hotels/' + ${hotelId} + '/rooms/add'}" method="post" th:object="${room}" enctype="multipart/form-data">
         <input type="hidden" th:field="*{hotelId}"/>
 
         <div class="mb-3">
@@ -41,6 +41,38 @@
         </div>
 
         <div class="mb-3">
+            <label>Area (m²)</label>
+            <input type="number" step="0.01" th:field="*{area}" class="form-control"/>
+            <div th:if="${#fields.hasErrors('area')}" class="text-danger small">
+                <span th:text="${#fields.errors('area')}"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Description</label>
+            <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+            <div th:if="${#fields.hasErrors('description')}" class="text-danger small">
+                <span th:text="${#fields.errors('description')}"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Floor</label>
+            <input type="number" th:field="*{floor}" class="form-control"/>
+            <div th:if="${#fields.hasErrors('floor')}" class="text-danger small">
+                <span th:text="${#fields.errors('floor')}"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Room Number</label>
+            <input type="text" th:field="*{roomNumber}" class="form-control"/>
+            <div th:if="${#fields.hasErrors('roomNumber')}" class="text-danger small">
+                <span th:text="${#fields.errors('roomNumber')}"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
             <label>Price</label>
             <input type="number" step="0.01" th:field="*{price}" class="form-control"/>
             <div th:if="${#fields.hasErrors('price')}" class="text-danger small">
@@ -55,6 +87,9 @@
                 <span th:text="${#fields.errors('amenities')}"></span>
             </div>
         </div>
+
+        <label>Upload Images</label>
+        <input type="file" th:field="*{images}" multiple class="form-control mb-3">
 
         <button type="submit" class="btn btn-success">Save Room</button>
         <a th:href="@{'/owner/hotels/' + ${hotelId} + '/rooms'}" class="btn btn-secondary">Back</a>

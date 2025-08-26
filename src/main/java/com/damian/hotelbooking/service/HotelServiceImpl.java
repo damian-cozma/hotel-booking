@@ -30,7 +30,9 @@ public class HotelServiceImpl implements HotelService {
     public HotelServiceImpl(HotelRepository hotelRepository,
                             UserService userService,
                             UserRepository userRepository,
-                            AmenityRepository amenityRepository, HotelImageService hotelImageService, BookingRepository bookingRepository) {
+                            AmenityRepository amenityRepository,
+                            HotelImageService hotelImageService,
+                            BookingRepository bookingRepository) {
         this.hotelRepository = hotelRepository;
         this.userService = userService;
         this.userRepository = userRepository;

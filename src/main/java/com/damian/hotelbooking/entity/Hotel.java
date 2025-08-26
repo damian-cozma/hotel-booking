@@ -2,6 +2,8 @@ package com.damian.hotelbooking.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 import java.util.Set;
 import java.util.Objects;
 
@@ -26,7 +28,7 @@ public class Hotel {
     @Column(name = "email",nullable = false)
     private String email;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 2000, nullable = false)
     private String description;
 
     @Column(name = "country", nullable = false)
@@ -58,6 +60,9 @@ public class Hotel {
             inverseJoinColumns = @JoinColumn(name = "amenity_id")
     )
     private Set<Amenity> amenities;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HotelImage> images;
 
     @Override
     public boolean equals(Object object) {

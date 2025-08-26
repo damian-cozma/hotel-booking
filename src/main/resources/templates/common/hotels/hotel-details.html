@@ -44,7 +44,14 @@
                 <span th:text="${hotel.country} + ', '"></span>
                 <span th:text="${hotel.street}"></span>
             </p>
-            <p th:text="${hotel.description}">Hotel description goes here.</p>
+
+            <div class="mb-4 mt-2">
+                <div class="card shadow-sm rounded p-3">
+                    <p id="hotelDescription" class="mb-1" style="max-height: 100px; overflow-y: scroll; scrollbar-gutter: stable;">
+                        <span th:text="${hotel.description}"></span>
+                    </p>
+                </div>
+            </div>
 
             <h5>Amenities:</h5>
             <ul class="list-unstyled mb-3" style="columns: 3;">
@@ -54,10 +61,6 @@
                 </li>
             </ul>
 
-
-            <div class="mt-auto d-flex justify-content-between align-items-center">
-                <h4 class="text-primary mb-0" th:text="${hotel.pricePerNight != null} ? 'From $' + ${hotel.pricePerNight} + '/night' : 'No listings available'"></h4>
-            </div>
         </div>
     </div>
 
@@ -117,6 +120,8 @@
                 <td class="d-flex gap-2">
                     <a th:href="@{/hotels/{hotelId}/rooms/{roomId}/book(hotelId=${hotel.id}, roomId=${room.id})}"
                        class="btn btn-primary btn-sm">Book</a>
+                    <a th:href="@{/hotels/{hotelId}/rooms/{roomId}(hotelId=${hotel.id}, roomId=${room.id})}"
+                       class="btn btn-outline-secondary btn-sm">View</a>
                 </td>
             </tr>
 

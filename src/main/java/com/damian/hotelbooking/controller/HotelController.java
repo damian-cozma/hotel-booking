@@ -79,6 +79,16 @@ public class HotelController {
 
     }
 
+    @GetMapping("/{hotelId}/rooms/{roomId}")
+    public String showRoomDetails(@PathVariable("hotelId") Long hotelId, @PathVariable("roomId") Long roomId,
+                                  Model model) {
+
+        model.addAttribute("hotel", hotelService.findById(hotelId));
+        model.addAttribute("room", roomService.findById(roomId));
+
+        return "common/hotels/room-details";
+    }
+
     @GetMapping("/{hotelId}/rooms/{roomId}/book")
     public String showCreateBookingForm(@PathVariable Long hotelId,
                                         @PathVariable Long roomId,
@@ -99,7 +109,6 @@ public class HotelController {
         model.addAttribute("booking", bookingDto);
         model.addAttribute("unavailableDates", unavailableDates);
 
-
         return "common/hotels/book";
     }
 
@@ -113,6 +122,7 @@ public class HotelController {
 
         bookingService.createBooking(bookingDto, bindingResult);
 
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("userId", userService.findByUsername(principal.getName()).getId());
             model.addAttribute("hotelId", hotelId);
@@ -120,6 +130,9 @@ public class HotelController {
             Room room = roomService.findById(roomId);
             model.addAttribute("roomPrice", room.getPrice());
             model.addAttribute("room", room);
+            model.addAttribute("booking", bookingDto);
+            List<LocalDate[]> unavailableDates = roomService.getUnavailableDateRanges(roomId);
+            model.addAttribute("unavailableDates", unavailableDates);
             return "common/hotels/book";
         }
 

@@ -40,7 +40,6 @@ public class OwnerHotelController {
     @PostMapping("/new")
     public String createHotel(@Valid @ModelAttribute("hotelDto") HotelDto hotelDto,
                            BindingResult bindingResult,
-                           Model model,
                            Principal principal) {
 
         if (bindingResult.hasErrors()) {
@@ -123,7 +122,6 @@ public class OwnerHotelController {
 
     @PostMapping("/{hotelId}/rooms/add")
     public String addRoom(@PathVariable("hotelId") Long hotelId,
-                          Model model,
                           @Valid @ModelAttribute("room") RoomDto roomDto,
                           BindingResult bindingResult,
                           Principal principal) {

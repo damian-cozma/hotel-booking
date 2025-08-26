@@ -51,7 +51,7 @@ public class HotelDto {
     @Email(message = "Invalid email format")
     private String email;
 
-    @Size(max = 1000, message = "Description must be at most 1000 characters")
+    @Size(min = 10, max = 2000, message = "Description must be between 10 and 2000 characters")
     private String description;
 
     private List<MultipartFile> images;

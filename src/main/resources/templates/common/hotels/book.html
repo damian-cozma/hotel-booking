@@ -18,6 +18,13 @@
 
     <form th:action="@{'/hotels/' + ${hotelId} + '/rooms/' + ${roomId} + '/book'}"
           th:object="${booking}" method="post">
+
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+            <ul>
+                <li th:each="error : ${#fields.globalErrors()}" th:text="${error}"></li>
+            </ul>
+        </div>
+
         <input type="hidden" th:field="*{userId}"/>
         <input type="hidden" th:field="*{roomId}"/>
 
@@ -54,7 +61,8 @@
             <div class="form-text">Calculated as room price x number of nights</div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Book Now</button>
+        <button id="booking" type="submit" class="btn btn-primary">Book Now</button>
+
         <a th:href="@{'/hotels/' + ${hotelId}}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
