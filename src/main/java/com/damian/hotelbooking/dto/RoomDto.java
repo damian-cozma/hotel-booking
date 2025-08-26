@@ -42,7 +42,7 @@ public class RoomDto {
     @NotBlank(message = "Room number is required")
     private String roomNumber;
 
-    private Set<String> amenities;
+    private List<String> amenities;
 
     private List<MultipartFile> images;
 

@@ -64,10 +64,12 @@ public class RoomServiceImpl implements RoomService {
         room.setArea(roomDto.getArea());
         room.setFloor(roomDto.getFloor());
 
-        Set<String> amenities = roomDto.getAmenities();
-        if (amenities == null) amenities = Collections.emptySet();
+        List<String> amenities = roomDto.getAmenities();
+        if (amenities == null) {
+            amenities = Collections.emptyList();
+        }
 
-        Set<Amenity> amenitySet = amenities.stream()
+        List<Amenity> amenityList = amenities.stream()
                 .filter(name -> !name.trim().isEmpty())
                 .map(name -> amenityRepository.findByName(name)
                         .orElseGet(() -> {
@@ -75,9 +77,9 @@ public class RoomServiceImpl implements RoomService {
                             newAmenity.setName(name);
                             return amenityRepository.save(newAmenity);
                         }))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
-        room.setAmenities(amenitySet);
+        room.setAmenities(amenityList);
 
         roomRepository.save(room);
 

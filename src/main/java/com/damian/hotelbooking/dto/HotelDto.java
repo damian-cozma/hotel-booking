@@ -60,7 +60,7 @@ public class HotelDto {
 
     private Long ownerId;
 
-    private Set<String> amenities;
+    private List<String> amenities;
 
     private Double pricePerNight;
 

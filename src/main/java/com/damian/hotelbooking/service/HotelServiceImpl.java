@@ -80,10 +80,12 @@ public class HotelServiceImpl implements HotelService {
         hotel.setDescription(hotelDto.getDescription());
         hotel.setOwner(userService.findById(hotelDto.getOwnerId()));
 
-        Set<String> amenities = hotelDto.getAmenities();
-        if (amenities == null) amenities = Collections.emptySet();
+        List<String> amenities = hotelDto.getAmenities();
+        if (amenities == null) {
+            amenities = Collections.emptyList();
+        }
 
-        Set<Amenity> amenitySet = amenities.stream()
+        List<Amenity> amenityList = amenities.stream()
                 .filter(name -> !name.trim().isEmpty())
                 .map(name -> amenityRepository.findByName(name)
                         .orElseGet(() -> {
@@ -91,9 +93,9 @@ public class HotelServiceImpl implements HotelService {
                             newAmenity.setName(name);
                             return amenityRepository.save(newAmenity);
                         }))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
-        hotel.setAmenities(amenitySet);
+        hotel.setAmenities(amenityList);
 
         hotelRepository.save(hotel);
 
@@ -216,9 +218,9 @@ public class HotelServiceImpl implements HotelService {
         hotelDto.setEmail(hotel.getEmail());
         hotelDto.setStreet(hotel.getStreet());
         hotelDto.setDescription(hotel.getDescription());
-        Set<String> amenities = hotel.getAmenities().stream()
+        List<String> amenities = hotel.getAmenities().stream()
                 .map(Amenity::getName)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         hotelDto.setAmenities(amenities);
         hotelDto.setRooms(hotel.getRooms());
 
