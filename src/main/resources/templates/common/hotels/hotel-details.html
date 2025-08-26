@@ -45,6 +45,10 @@
                 <span th:text="${hotel.street}"></span>
             </p>
 
+            <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#contactModal">
+                <i class="bi bi-envelope-at me-1"></i> Contact
+            </button>
+
             <div class="mb-4 mt-2">
                 <div class="card shadow-sm rounded p-3">
                     <p id="hotelDescription" class="mb-1" style="max-height: 100px; overflow-y: scroll; scrollbar-gutter: stable;">
@@ -60,7 +64,31 @@
                     <span th:text="${amenity}"></span>
                 </li>
             </ul>
+        </div>
 
+        <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="contactModalLabel">Hotel Contact</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-2">
+                            <i class="bi bi-envelope-fill text-primary me-2"></i>
+                            <span th:text="${hotel.email}"></span>
+                        </p>
+                        <p>
+                            <i class="bi bi-telephone-fill text-success me-2"></i>
+                            <span th:text="${hotel.phoneNumber}"></span>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
