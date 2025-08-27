@@ -105,8 +105,8 @@
                         <strong>Address:</strong>
                         <span th:text="${hotel.street + ', ' + hotel.city + ', ' + hotel.state + ', ' + hotel.country}"></span>
                     </p>
-                    <p class="card-text mb-2">
-                        <strong>Description:</strong> <span th:text="${hotel.description}"></span>
+                    <p id="hotelDescription" class="mb-1" style="max-height: 100px; overflow-y: scroll; scrollbar-gutter: stable;">
+                        <span class="card-text" th:text="${hotel.description}"></span>
                     </p>
                     <div class="mb-2">
                         <strong>Amenities:</strong>
