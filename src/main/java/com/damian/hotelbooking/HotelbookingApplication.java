@@ -1,16 +1,11 @@
 package com.damian.hotelbooking;
 
-import com.damian.hotelbooking.entity.User;
-import com.damian.hotelbooking.entity.UserRole;
-import com.damian.hotelbooking.repository.UserRepository;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.security.Principal;
 
+@EnableScheduling
 @SpringBootApplication
 public class HotelbookingApplication {
 
