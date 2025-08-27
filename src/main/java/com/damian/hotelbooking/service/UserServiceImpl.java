@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,13 +31,17 @@ import static com.damian.hotelbooking.entity.UserRole.ROLE_HOTEL_ADMIN;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -58,8 +63,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = "{bcrypt}" + passwordEncoder.encode(signupDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(signupDto.getPassword());
 
         User user = new User();
         user.setUsername(signupDto.getUsername());
@@ -110,8 +114,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(User user) {
         if (user.getPassword() != null && !user.getPassword().isBlank() && !user.getPassword().startsWith("{bcrypt}")) {
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            user.setPassword("{bcrypt}" + passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         } else if (user.getPassword() == null || user.getPassword().isBlank()) {
             User existing = userRepository.findById(user.getId()).orElseThrow();
             user.setPassword(existing.getPassword());
@@ -135,15 +138,13 @@ public class UserServiceImpl implements UserService {
             bindingResult.rejectValue("confirmPassword", "error.passwordDto", "New passwords don't match");
         }
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
         String currentEncodedPassword = user.getPassword().replace("{bcrypt}", "");
         if (!passwordEncoder.matches(currentPassword, currentEncodedPassword)) {
             bindingResult.rejectValue("currentPassword", "error.passwordDto", "Current password is incorrect");
             return;
         }
 
-        user.setPassword("{bcrypt}" + passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 

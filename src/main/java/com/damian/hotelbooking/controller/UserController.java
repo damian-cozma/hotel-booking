@@ -79,7 +79,7 @@ public class UserController {
         return "redirect:/account?section=security";
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete-account")
     public String deleteAccount(Principal principal, HttpServletRequest request) {
 
         userService.deleteAccount(principal, request);

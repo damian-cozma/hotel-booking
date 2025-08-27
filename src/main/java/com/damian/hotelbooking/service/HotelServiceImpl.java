@@ -190,7 +190,7 @@ public class HotelServiceImpl implements HotelService {
 
 
         List<Long> topHotelIds = hotelBookingCounts.entrySet().stream()
-                .sorted((entry1, entry2) -> Long.compare(entry2.getValue(), entry1.getValue()))
+                .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
                 .limit(3)
                 .map(Map.Entry::getKey)
                 .toList();

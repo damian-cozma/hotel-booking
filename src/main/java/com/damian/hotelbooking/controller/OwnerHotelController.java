@@ -135,4 +135,34 @@ public class OwnerHotelController {
         return "redirect:/owner/hotels/" + hotelId + "/rooms";
     }
 
+//    @GetMapping("/{hotelId}/rooms/{roomId}/edit")
+//    public String showUpdateRoomForm(@PathVariable Long hotelId,
+//                                      @PathVariable Long roomId,
+//                                      Model model,
+//                                      Principal principal) {
+//
+//        hotelService.checkOwnership(hotelId, principal);
+//
+//        model.addAttribute("hotelDto", hotelService.findById(hotelId));
+//        model.addAttribute("roomDto", roomService.findById(roomId));
+//        return "owner/rooms/add";
+//
+//    }
+//
+//    @PutMapping("/{hotelId}/rooms/{roomId}/edit")
+//    public String updateRoom(@PathVariable Long hotelId,
+//                              @PathVariable Long roomId,
+//                              @Valid @ModelAttribute("roomDto") RoomDto roomDto,
+//                              BindingResult bindingResult,
+//                              Principal principal) {
+//
+//        if (bindingResult.hasErrors()) {
+//            return "owner/rooms/add";
+//        }
+//
+//        roomService.addRoom(hotelId, roomDto, bindingResult, principal);
+//        return "owner/rooms/add";
+//
+//    }
+
 }

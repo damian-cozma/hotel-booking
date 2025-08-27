@@ -2048,7 +2048,7 @@ public class UserServiceImpl implements UserService {
         }
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = "{bcrypt}" + passwordEncoder.encode(signupDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(signupDto.getPassword());
 
         User user = new User(
                 signupDto.getUsername(),
