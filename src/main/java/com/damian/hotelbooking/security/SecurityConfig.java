@@ -35,7 +35,7 @@ public class SecurityConfig {
                                 .requestMatchers("/users/**").hasRole("PLATFORM_ADMIN")
                                 .requestMatchers("/owner/**").hasAnyRole("HOTEL_ADMIN", "PLATFORM_ADMIN")
                                 .requestMatchers("/account").authenticated()
-                                .requestMatchers("/become-a-host").authenticated()
+                                .requestMatchers("/become-a-host").hasRole("USER")
                                 .requestMatchers("/bookings").authenticated()
                                 .requestMatchers("/hotels/*/rooms/*/book").authenticated()
                                 .anyRequest().permitAll()

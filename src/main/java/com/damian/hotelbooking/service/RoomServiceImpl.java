@@ -45,6 +45,12 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional
     public void addRoom(Long hotelId, RoomDto roomDto, BindingResult bindingResult, Principal principal) {
+
+        boolean roomExists = roomRepository.existsByHotelIdAndRoomNumber(hotelId, roomDto.getRoomNumber());
+        if (roomExists) {
+            bindingResult.rejectValue("roomNumber", "error.roomDto", "Room number already exists for this hotel");
+        }
+
         if (bindingResult.hasErrors()) return;
 
         roomDto.setHotelId(hotelId);

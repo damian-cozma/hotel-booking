@@ -124,13 +124,15 @@ public class OwnerHotelController {
     public String addRoom(@PathVariable("hotelId") Long hotelId,
                           @Valid @ModelAttribute("room") RoomDto roomDto,
                           BindingResult bindingResult,
+                          Model model,
                           Principal principal) {
 
+        roomService.addRoom(hotelId, roomDto, bindingResult, principal);
+
         if (bindingResult.hasErrors()) {
+            model.addAttribute("roomTypes", RoomType.values());
             return "owner/rooms/add";
         }
-
-        roomService.addRoom(hotelId, roomDto, bindingResult, principal);
 
         return "redirect:/owner/hotels/" + hotelId + "/rooms";
     }

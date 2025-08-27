@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.validation.BindingResult;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
-
+    boolean existsByHotelIdAndRoomNumber(Long hotelId, String roomNumber);
 }
