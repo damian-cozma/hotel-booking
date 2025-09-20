@@ -16,10 +16,12 @@
           <li class="nav-item"><a class="nav-link" routerLink="/hotels/list">Search</a></li>
         </ul>
 
-        <div class="d-flex align-items-center gap-2">
-          <a class="btn btn-outline-primary btn-sm rounded-pill" routerLink="/login">Login</a>
-          <a class="btn btn-primary btn-sm rounded-pill" routerLink="/signup">Signup</a>
-        </div>
+        @if (!hideAuth()) {
+          <div class="d-flex align-items-center gap-2">
+            <a class="btn btn-outline-primary btn-sm rounded-pill" routerLink="/login">Login</a>
+            <a class="btn btn-primary btn-sm rounded-pill" routerLink="/signup">Signup</a>
+          </div>
+        }
       </div>
     </div>
   </nav>
