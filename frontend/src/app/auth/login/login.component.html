@@ -1,1 +1,26 @@
-<p>login works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div>
+    <div>
+      <label for="username">Username</label>
+      <input id="username" type="text" formControlName="username"/>
+    </div>
+
+    <div>
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password"/>
+    </div>
+
+    <button>Login</button>
+  </div>
+
+  @if (usernameIsInvalid) {
+    <p>Username is invalid!</p>
+  }
+
+  @if (passwordIsInvalid) {
+    <p>Password is invalid!</p>
+  }
+
+</form>
